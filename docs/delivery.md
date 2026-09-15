@@ -91,7 +91,7 @@ the archive and again immediately before upload.
 With an Xcode Apple account configured for team `VWKG94374J`, archive and upload directly:
 
 ```bash
-.venv/bin/inv upload-testflight --marketing-version=0.1.0 --build-number=1
+.venv/bin/inv upload-testflight --marketing-version=0.0.1 --build-number=1
 ```
 
 Use a new build number for every later upload of the same marketing version. The task generates the
@@ -112,7 +112,7 @@ Repository variables:
 - `TESTFLIGHT_UPLOAD_ENABLED`
 - `APPLE_TEAM_ID` (optional; defaults to `VWKG94374J`)
 - `IOS_BUNDLE_IDENTIFIER` (optional; defaults to `de.malaber.tauberdefence`)
-- `IOS_MARKETING_VERSION` (optional; defaults to `0.1.0`)
+- `IOS_MARKETING_VERSION` (optional; defaults to `0.0.1`)
 - `APP_STORE_CONNECT_APP_ID` (required numeric Apple ID)
 
 Protected `testflight` environment secrets:

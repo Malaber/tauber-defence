@@ -45,6 +45,8 @@ SwiftUI GameViewModel → RealityKit GameRenderer
 
 Lokale Befehle und benötigte App-Store-Connect-Secrets stehen in [docs/delivery.md](docs/delivery.md) und [docs/app-store-connect-setup.md](docs/app-store-connect-setup.md). Pushes und Pull Requests durchlaufen Core- und iOS-Checks. Erfolgreiche `main`-Builds können nach expliziter Freischaltung automatisch an TestFlight gehen.
 
+Der aktuelle Stand, offene Release-Blocker und die vollständigen TestFlight-Abnahmekriterien stehen im [lebenden Implementierungsplan](docs/implementation-plan.md).
+
 ```bash
 .venv/bin/inv check                  # Core + iPhone/iPad E2E
 .venv/bin/inv app-store-screenshots  # 5 Motive je Gerätefamilie

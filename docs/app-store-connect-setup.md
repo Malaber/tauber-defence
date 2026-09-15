@@ -10,7 +10,7 @@ provisioned. Pull requests never upload. A successful `main` build uploads only 
 - Platform: iOS
 - Minimum OS: iOS 18
 - Bundle identifier: `de.malaber.tauberdefence`
-- Initial marketing version: `0.1.0`
+- Initial marketing version: `0.0.1`
 - Primary category: Games
 - Product URL: `https://tauber-defence.malaber.de/`
 - Support URL: `https://tauber-defence.malaber.de/support/`
@@ -55,7 +55,7 @@ desired before signing and upload.
 Repository variables:
 
 - `APP_STORE_CONNECT_APP_ID`: numeric Apple ID from App Store Connect.
-- `IOS_MARKETING_VERSION`: optional; defaults to `0.1.0`.
+- `IOS_MARKETING_VERSION`: optional; defaults to `0.0.1`.
 - `APPLE_TEAM_ID`: optional; defaults to `VWKG94374J`.
 - `IOS_BUNDLE_IDENTIFIER`: optional; defaults to `de.malaber.tauberdefence`.
 - `TESTFLIGHT_UPLOAD_ENABLED`: leave unset during initial setup.
