@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tauber-defence.malaber.de/sitemap.xml

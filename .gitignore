@@ -1,0 +1,16 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.build/
+.swiftpm/
+DerivedData/
+*.xcresult
+*.ipa
+*.dSYM.zip
+ios/TauberDefenceIOS/.derived-data/
+ios/TauberDefenceIOS/.derived-*/
+ios/TauberDefenceIOS/.clang-module-cache/
+ios/TauberDefenceIOS/TauberDefenceApp.xcodeproj/
+e2e-artifacts/
+coverage/
+Secrets.xcconfig
