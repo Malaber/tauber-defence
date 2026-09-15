@@ -45,7 +45,7 @@ export default function PrivacyPage() {
           </section>
           <section>
             <h2>Kontakt</h2>
-            <p>Datenschutzfragen bitte an <a href="mailto:tauber-defence@malaber.de">tauber-defence@malaber.de</a> oder über die <Link href="/support/">Supportseite</Link>.</p>
+            <p>Datenschutzfragen bitte an <a href="mailto:privacy-tauber-defence@schaedler.rocks">privacy-tauber-defence@schaedler.rocks</a> oder über die <Link href="/support/">Supportseite</Link>.</p>
           </section>
         </article>
       </main>

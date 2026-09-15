@@ -25,7 +25,7 @@ export default function SupportPage() {
             <Mail aria-hidden="true" />
             <h2>E-Mail</h2>
             <p>Für Fragen, Feedback und Probleme mit dem Spiel.</p>
-            <a className="contact-action" href="mailto:tauber-defence@malaber.de?subject=Tauber%20Defence%20Support">tauber-defence@malaber.de</a>
+            <a className="contact-action" href="mailto:support-tauber-defence@schaedler.rocks?subject=Tauber%20Defence%20Support">support-tauber-defence@schaedler.rocks</a>
           </article>
           <article>
             <Bug aria-hidden="true" />
