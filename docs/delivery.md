@@ -95,10 +95,12 @@ With an Xcode Apple account configured for team `VWKG94374J`, archive and upload
 ```
 
 Use a new build number for every later upload of the same marketing version. The task generates the
-project, archives with automatic signing, and exports using `ExportOptions.TestFlight.plist`, whose
-`destination` is `upload`. The script uses a system-only `PATH` for `xcodebuild`; Homebrew `rsync`
+project, refuses anything except a clean, pushed, current `main`, archives with automatic signing,
+and exports using `ExportOptions.TestFlight.plist`, whose `destination` is `upload`. The script uses
+a system-only `PATH` for `xcodebuild`; Homebrew `rsync`
 does not support an extended-attribute option used by Xcode packaging and can otherwise cause an
-opaque `exportArchive Copy failed` error. The signed archive remains at the printed temporary path.
+opaque `exportArchive Copy failed` error. Archive/export logs and the signed archive remain at the
+printed temporary path.
 
 ## Automatic TestFlight delivery
 

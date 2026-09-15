@@ -26,6 +26,7 @@ struct PauseOverlay: View {
                 .foregroundStyle(GameTheme.yellow)
             Text("KURZE GURR-PAUSE")
                 .font(.system(.title2, design: .rounded, weight: .black))
+                .accessibilityIdentifier("pause.overlay")
 
             HStack(spacing: 10) {
                 Button("Neu starten", action: onRestart)
@@ -37,7 +38,6 @@ struct PauseOverlay: View {
         }
         .padding(24)
         .gamePanel()
-        .accessibilityIdentifier("pause.overlay")
     }
 }
 
@@ -56,6 +56,7 @@ struct ResultOverlay: View {
             Text(title)
                 .font(.system(.largeTitle, design: .rounded, weight: .black))
                 .multilineTextAlignment(.center)
+                .accessibilityIdentifier("game.result")
             Text(message)
                 .font(.system(.body, design: .rounded, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.68))
@@ -67,7 +68,6 @@ struct ResultOverlay: View {
         .padding(28)
         .frame(maxWidth: 440)
         .gamePanel()
-        .accessibilityIdentifier("game.result")
     }
 }
 

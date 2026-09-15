@@ -139,7 +139,7 @@ private struct UITestControlStrip: View {
         .padding(.trailing, 18)
         .padding(.bottom, 72)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-        .accessibilityIdentifier("ui-test.controls")
+        .accessibilityElement(children: .contain)
     }
 }
 #endif

@@ -13,6 +13,7 @@ struct BuildMenu: View {
                     .font(.system(size: 10, weight: .black, design: .rounded))
                     .foregroundStyle(GameTheme.yellow)
                     .tracking(1)
+                    .accessibilityIdentifier("build.menu")
                 Text("Abwehr aufstellen")
                     .font(.system(.headline, design: .rounded, weight: .bold))
             }
@@ -38,7 +39,6 @@ struct BuildMenu: View {
         .padding(12)
         .gamePanel()
         .frame(maxWidth: 760)
-        .accessibilityIdentifier("build.menu")
     }
 }
 

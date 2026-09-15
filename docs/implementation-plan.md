@@ -16,8 +16,8 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 - [x] Core unit suite contains 23 tests and currently clears the 90% line-coverage gate.
 - [x] Generic iOS Simulator build has succeeded with signing disabled.
 - [x] Comprehensive XCUITest flows, deterministic fixtures, retry tooling, and marketing screenshot capture are implemented.
-- [ ] Make the complete iPhone XCUITest run green and retain its passing artifacts.
-- [ ] Make the complete iPad XCUITest run green and retain its passing artifacts.
+- [x] Make the complete iPhone XCUITest run green and retain its passing artifacts.
+- [x] Make the complete iPad XCUITest run green and retain its passing artifacts.
 - [x] Public compliance website is deployed through GitHub Pages; custom domain, DNS, HTTPS, `/`, `/support/`, and `/privacy/` return successfully.
 - [x] Approved contact-address commit is live; `/capabilities/` and deployed support/privacy addresses are verified.
 - [ ] Provision Apple signing and App Store Connect, then upload first playable `0.0.1` build.
@@ -148,7 +148,7 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 - [x] Test economy and invalid purchases.
 - [x] Test arrival, cleanliness, victory, defeat, reset, pause, and Rüdiger.
 - [x] Enforce at least 90% `TauberDefenceCore` line coverage.
-- [ ] Keep the coverage gate green after every gameplay change.
+- [x] Keep the coverage gate green after every gameplay change.
 
 ### End-to-end gameplay
 
@@ -161,8 +161,8 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 - [x] Test Rüdiger presentation.
 - [x] Test victory, restart, and defeat flows.
 - [x] Build once, run tests serially, retry named failures, and retain logs/xcresult.
-- [ ] Pass the complete iPhone XCUITest suite from a clean simulator and retain its evidence.
-- [ ] Pass the complete iPad suite from a clean simulator.
+- [x] Pass the complete iPhone XCUITest suite from a clean simulator and retain its evidence.
+- [x] Pass the complete iPad suite from a clean simulator.
 - [ ] Pass the same two-device matrix in GitHub Actions on current `main`.
 
 ### Marketing screenshots
@@ -171,8 +171,8 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 - [x] Define five motifs: marketplace, battle, Rüdiger, victory, defeat.
 - [x] Normalize status bar time/battery for repeatable captures.
 - [x] Generate a dimensions manifest and preserve source xcresult.
-- [ ] Produce and visually inspect all five iPhone landscape PNGs from the release candidate.
-- [ ] Produce and visually inspect all five iPad landscape PNGs from the release candidate.
+- [x] Produce and visually inspect all five iPhone landscape PNGs from the release candidate.
+- [x] Produce and visually inspect all five iPad landscape PNGs from the release candidate.
 - [ ] Confirm final pixel dimensions and device classes are accepted by App Store Connect.
 - [ ] Select final gallery ordering and add localized captions only if part of store creative.
 - [ ] Archive final screenshot source build/commit and untouched PNGs.
@@ -246,7 +246,7 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 ### First upload
 
 - [ ] Freeze a clean, green `main` commit as first-playable candidate `0.0.1`.
-- [ ] Run complete local gate: core coverage plus iPhone and iPad E2E.
+- [x] Run complete local gate: core coverage plus iPhone and iPad E2E.
 - [ ] Archive and upload manually, or dispatch the guarded TestFlight workflow.
 - [ ] Retain signed archive, IPA/export evidence, and upload logs.
 - [ ] Wait for App Store Connect processing and resolve validation warnings.

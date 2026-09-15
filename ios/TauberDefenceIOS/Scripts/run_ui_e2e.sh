@@ -24,22 +24,37 @@ case "$artifact_path" in
 esac
 
 safe_device=$(printf '%s' "$device_name" | tr -cs '[:alnum:]' '-')
-derived_data="$package_dir/.derived-e2e-$safe_device"
 result_bundle="$artifact_path/TestResults.xcresult"
 summary_path="$artifact_path/summary.md"
 marketing_manifest="$artifact_path/marketing-screenshots.md"
 simulator_inventory="$artifact_path/simulators.json"
+device_lock="/tmp/tauber-defence-e2e.lock"
+derived_data=""
+lock_acquired=false
 
-rm -rf "$artifact_path" "$derived_data"
-mkdir -p "$artifact_path" "$package_dir/.clang-module-cache"
 cleanup() {
   if [[ -n "${device_udid:-}" ]]; then
     xcrun simctl status_bar "$device_udid" clear >/dev/null 2>&1 || true
     xcrun simctl shutdown "$device_udid" >/dev/null 2>&1 || true
   fi
-  rm -rf "$derived_data"
+  if [[ -n "$derived_data" ]]; then
+    rm -rf "$derived_data"
+  fi
+  if [[ "$lock_acquired" == "true" ]]; then
+    rm -f "$device_lock"
+  fi
 }
 trap cleanup EXIT
+
+if ! shlock -p "$$" -f "$device_lock"; then
+  echo "Another Tauber Defence E2E run is already active." >&2
+  exit 2
+fi
+lock_acquired=true
+
+rm -rf "$artifact_path"
+mkdir -p "$artifact_path" "$package_dir/.clang-module-cache"
+derived_data=$(mktemp -d "$package_dir/.derived-e2e-$safe_device.XXXXXX")
 
 export CLANG_MODULE_CACHE_PATH="${CLANG_MODULE_CACHE_PATH:-$package_dir/.clang-module-cache}"
 export TAUBERDEFENCE_UI_TEST_ARTIFACT_DIR="$artifact_path"
@@ -53,22 +68,29 @@ device_udid=$(python3 "$package_dir/Scripts/resolve_simulator.py" \
 cd "$package_dir"
 xcodegen generate
 
+build_for_testing() {
+  local log_path=$1
+  set +e
+  xcodebuild \
+    -project TauberDefenceApp.xcodeproj \
+    -scheme TauberDefence \
+    -derivedDataPath "$derived_data" \
+    -destination "platform=iOS Simulator,id=$device_udid" \
+    -destination-timeout 120 \
+    -parallel-testing-enabled NO \
+    -maximum-parallel-testing-workers 1 \
+    -only-testing:"$only_testing" \
+    CODE_SIGNING_ALLOWED=NO \
+    build-for-testing \
+    2>&1 | tee "$log_path"
+  local status=${PIPESTATUS[0]}
+  set -e
+  return "$status"
+}
+
 build_log="$artifact_path/build-for-testing.log"
-set +e
-xcodebuild \
-  -project TauberDefenceApp.xcodeproj \
-  -scheme TauberDefence \
-  -derivedDataPath "$derived_data" \
-  -destination "platform=iOS Simulator,id=$device_udid" \
-  -destination-timeout 120 \
-  -parallel-testing-enabled NO \
-  -maximum-parallel-testing-workers 1 \
-  -only-testing:"$only_testing" \
-  CODE_SIGNING_ALLOWED=NO \
-  build-for-testing \
-  2>&1 | tee "$build_log"
-build_status=${PIPESTATUS[0]}
-set -e
+build_status=0
+build_for_testing "$build_log" || build_status=$?
 if [[ "$build_status" -ne 0 ]]; then
   {
     echo "# Tauber Defence UI e2e"
@@ -127,25 +149,67 @@ for ((attempt = 1; attempt <= attempts; attempt++)); do
     break
   fi
   if [[ "$attempt" -lt "$attempts" ]]; then
+    attempt_bundle="$artifact_path/TestResults-attempt-$attempt.xcresult"
     if [[ -d "$result_bundle" ]]; then
-      mv "$result_bundle" "$artifact_path/TestResults-attempt-$attempt.xcresult"
+      mv "$result_bundle" "$attempt_bundle"
     fi
     failed_tests=()
-    while IFS= read -r failed_test; do
-      if [[ -n "$failed_test" ]]; then
-        failed_tests+=("$failed_test")
-      fi
-    done < <(
-      sed -nE \
-        "s/^Test Case '-\[([^.]*)\.([^ ]+) ([^]]+)\]' failed.*/\1\/\2\/\3/p" \
-        "$test_log"
-    )
+    failure_summary="$artifact_path/test-attempt-$attempt-summary.json"
+    if [[ -d "$attempt_bundle" ]] && \
+      xcrun xcresulttool get test-results summary \
+        --path "$attempt_bundle" > "$failure_summary" 2>/dev/null; then
+      while IFS= read -r failed_test; do
+        if [[ -n "$failed_test" ]]; then
+          failed_tests+=("$failed_test")
+        fi
+      done < <(
+        python3 - "$failure_summary" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as source:
+    summary = json.load(source)
+
+selections = set()
+for failure in summary.get("testFailures", []):
+    identifier = failure.get("testIdentifierString", "").removesuffix("()")
+    target = failure.get("targetName", "")
+    if target and "/" in identifier:
+        selections.add(f"{target}/{identifier}")
+
+for selection in sorted(selections):
+    print(selection)
+PY
+      )
+    fi
+    if [[ ${#failed_tests[@]} -eq 0 ]]; then
+      while IFS= read -r failed_test; do
+        if [[ -n "$failed_test" ]]; then
+          failed_tests+=("$failed_test")
+        fi
+      done < <(
+        sed -nE \
+          "s/^Test Case '-\[([^.]*)\.([^ ]+) ([^]]+)\]' failed.*/\1\/\2\/\3/p" \
+          "$test_log"
+      )
+    fi
     if [[ ${#failed_tests[@]} -gt 0 ]]; then
       test_selections=("${failed_tests[@]}")
       echo "Retrying failed UI tests ($attempt/$attempts): ${test_selections[*]}"
     else
       test_selections=("$only_testing")
       echo "Retrying full isolated UI test run ($attempt/$attempts)..."
+    fi
+    app_bundle="$derived_data/Build/Products/Debug-iphonesimulator/Tauber Defence.app"
+    if [[ ! -d "$app_bundle" ]]; then
+      echo "Built app disappeared; rebuilding before retry $((attempt + 1))."
+      rebuild_status=0
+      build_for_testing "$artifact_path/rebuild-for-testing-attempt-$((attempt + 1)).log" \
+        || rebuild_status=$?
+      if [[ "$rebuild_status" -ne 0 ]]; then
+        test_status=$rebuild_status
+        break
+      fi
     fi
   fi
 done
@@ -154,6 +218,45 @@ result="passed"
 if [[ "$test_status" -ne 0 ]]; then
   result="failed"
 fi
+
+extract_marketing_screenshots() {
+  local bundle=$1
+  local attachment_dir
+  attachment_dir=$(mktemp -d "$artifact_path/.xcresult-attachments.XXXXXX")
+  if xcrun xcresulttool export attachments \
+    --path "$bundle" \
+    --output-path "$attachment_dir" \
+    > "$attachment_dir/export.log" 2>&1; then
+    python3 - "$attachment_dir" "$artifact_path" <<'PY'
+import json
+import re
+import shutil
+import sys
+from pathlib import Path
+
+source = Path(sys.argv[1])
+destination = Path(sys.argv[2])
+manifest = json.loads((source / "manifest.json").read_text(encoding="utf-8"))
+for test in manifest:
+    for attachment in test.get("attachments", []):
+        suggested = attachment.get("suggestedHumanReadableName", "")
+        match = re.match(r"(marketing-[0-9]{2}-[a-z0-9-]+)", suggested)
+        exported = source / attachment.get("exportedFileName", "")
+        if match and exported.suffix.lower() == ".png" and exported.is_file():
+            shutil.copy2(exported, destination / f"{match.group(1)}.png")
+PY
+  else
+    echo "Warning: could not export attachments from $(basename "$bundle")." >&2
+  fi
+  rm -rf "$attachment_dir"
+}
+
+for bundle in "$artifact_path"/TestResults*.xcresult; do
+  if [[ -d "$bundle" ]]; then
+    extract_marketing_screenshots "$bundle"
+  fi
+done
+
 screenshot_count=$(find "$artifact_path" -maxdepth 1 -type f -name '*.png' -print | wc -l | tr -d ' ')
 {
   echo "# App Store marketing screenshots"
