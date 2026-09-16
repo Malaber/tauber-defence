@@ -1,0 +1,240 @@
+{
+  "de": {
+    "level": {
+      "marketplace": {
+        "name": "Marktplatz"
+      }
+    },
+    "format": {
+      "euro": "{amount} €"
+    },
+    "pigeon": {
+      "normal": {
+        "name": "Stadttaube",
+        "subtitle": "Gelegenheitsgurrer"
+      },
+      "ruediger": {
+        "name": "Rüdiger",
+        "subtitle": "Tauben-Veteran"
+      },
+      "nerve": "NERVEN",
+      "tolerance_value": "{current} / {maximum}",
+      "status": {
+        "spawning": "landet ungebeten",
+        "unimpressed": "absolut unbeeindruckt",
+        "concerned": "leicht beunruhigt",
+        "alert": "wird misstrauisch",
+        "panicking": "kennt plötzlich Angst",
+        "fleeing": "verliert die Nerven",
+        "reached_target": "hat Hausverbot",
+        "removed": "schon weg"
+      }
+    },
+    "defense": {
+      "plastic_owl": {
+        "name": "Plastik-Uhu",
+        "tagline": "Starrt einzelne Tauben streng an."
+      },
+      "sprinkler": {
+        "name": "Rasensprenger",
+        "tagline": "Duscht und bremst ganze Gruppen."
+      },
+      "falconer": {
+        "name": "Falkner",
+        "tagline": "Schickt einen Falken mit Nachdruck."
+      }
+    },
+    "hud": {
+      "money_value": "{amount} €",
+      "city_budget": "STADTBUDGET",
+      "wave_value": "{current}/{total}",
+      "wave": "WELLE",
+      "cleanliness_value": "{value} %",
+      "cleanliness": "SAUBERKEIT",
+      "help": "Spielhilfe",
+      "resume": "Fortsetzen",
+      "pause": "Pause"
+    },
+    "build": {
+      "agency": "ORDNUNGSAMT",
+      "title": "Abwehr aufstellen",
+      "close": "Baumenü schließen",
+      "price_tagline": "{price} · {tagline}",
+      "accessibility": "{defense}, {price}"
+    },
+    "wave": {
+      "boss_inbound": "RÜDIGER IST UNTERWEGS",
+      "pigeons_inbound": "TAUBEN IM ANFLUG",
+      "start_first": "ERSTE WELLE STARTEN",
+      "summon_boss": "RÜDIGER RUFEN",
+      "next": "NÄCHSTE WELLE"
+    },
+    "pause": {
+      "title": "KURZE GURR-PAUSE",
+      "restart": "Neu starten",
+      "continue": "Weiter"
+    },
+    "result": {
+      "victory_title": "TAUBENFREIE ZONE!",
+      "victory_message": "Rüdiger und seine Gefolgschaft haben die Nerven verloren.",
+      "defeat_title": "CAFÉ ÜBERGURRT",
+      "defeat_message": "Die Stadtreinigung braucht eine zweite Schicht.",
+      "restart": "NOCH EINE RUNDE"
+    },
+    "help": {
+      "pick_spot_title": "Bauplatz wählen",
+      "pick_spot_body": "Tippe einen gelben Kreis auf dem Marktplatz an.",
+      "deploy_title": "Abwehr aufstellen",
+      "deploy_body": "Uhu, Sprinkler und Falkner erzeugen Druck und kosten Stadtbudget.",
+      "nerve_title": "Nerven statt Trefferpunkte",
+      "nerve_body": "Sinkt die Toleranz auf null, fliegt die Taube davon. Keine Taube kommt zu Schaden.",
+      "clean_title": "Café sauber halten",
+      "clean_body": "Jede Taube am Ziel kostet Sauberkeit. Überstehe fünf Wellen und Rüdiger.",
+      "support": "Support",
+      "privacy": "Datenschutz",
+      "title": "So wird verscheucht",
+      "done": "Verstanden"
+    },
+    "toast": {
+      "wave_already_running": "Die Tauben sind schon unterwegs.",
+      "pick_spot_first": "Erst einen gelben Bauplatz antippen.",
+      "defense_ready": "{defense} ist einsatzbereit!",
+      "spot_occupied": "Dieser Bauplatz ist schon belegt.",
+      "mass_panic": "MASSENPANIK!",
+      "combo": "GURR-COMBO ×{count}",
+      "reward": "+ {reward} · Nerven verloren",
+      "boss_warning": "NICHT SO TIEF, RÜDIGER!",
+      "wave_complete": "Welle geschafft. Die Stadt atmet auf.",
+      "victory": "TAUBENFREIE ZONE!",
+      "defeat": "Das Café wurde übergurrt.",
+      "funds_needed": "Noch {remaining} Stadtbudget nötig.",
+      "cannot_build": "Hier kann {defense} gerade nicht gebaut werden."
+    },
+    "accessibility": {
+      "pigeon_close": "Taubendetails schließen"
+    },
+    "debug": {
+      "spot": "Test-Bauplatz {id}",
+      "select_pigeon": "Taube wählen"
+    }
+  },
+  "en": {
+    "level": {
+      "marketplace": {
+        "name": "Marketplace"
+      }
+    },
+    "format": {
+      "euro": "€{amount}"
+    },
+    "pigeon": {
+      "normal": {
+        "name": "City pigeon",
+        "subtitle": "Casual cooer"
+      },
+      "ruediger": {
+        "name": "Rüdiger",
+        "subtitle": "Veteran pigeon"
+      },
+      "nerve": "NERVE",
+      "tolerance_value": "{current} / {maximum}",
+      "status": {
+        "spawning": "landing uninvited",
+        "unimpressed": "utterly unimpressed",
+        "concerned": "mildly concerned",
+        "alert": "getting suspicious",
+        "panicking": "has suddenly discovered fear",
+        "fleeing": "losing its nerve",
+        "reached_target": "banned from the premises",
+        "removed": "already gone"
+      }
+    },
+    "defense": {
+      "plastic_owl": {
+        "name": "Plastic owl",
+        "tagline": "Glares sternly at individual pigeons."
+      },
+      "sprinkler": {
+        "name": "Sprinkler",
+        "tagline": "Soaks and slows entire groups."
+      },
+      "falconer": {
+        "name": "Falconer",
+        "tagline": "Dispatches a falcon with authority."
+      }
+    },
+    "hud": {
+      "money_value": "€{amount}",
+      "city_budget": "CITY BUDGET",
+      "wave_value": "{current}/{total}",
+      "wave": "WAVE",
+      "cleanliness_value": "{value}%",
+      "cleanliness": "CLEANLINESS",
+      "help": "How to play",
+      "resume": "Resume",
+      "pause": "Pause"
+    },
+    "build": {
+      "agency": "PIGEON CONTROL",
+      "title": "Deploy deterrent",
+      "close": "Close build menu",
+      "price_tagline": "{price} · {tagline}",
+      "accessibility": "{defense}, {price}"
+    },
+    "wave": {
+      "boss_inbound": "RÜDIGER IS ON HIS WAY",
+      "pigeons_inbound": "PIGEONS INBOUND",
+      "start_first": "START FIRST WAVE",
+      "summon_boss": "SUMMON RÜDIGER",
+      "next": "NEXT WAVE"
+    },
+    "pause": {
+      "title": "QUICK COO BREAK",
+      "restart": "Restart",
+      "continue": "Continue"
+    },
+    "result": {
+      "victory_title": "PIGEON-FREE ZONE!",
+      "victory_message": "Rüdiger and his entourage have lost their nerve.",
+      "defeat_title": "CAFÉ COO-NQUERED",
+      "defeat_message": "The street-cleaning crew needs a second shift.",
+      "restart": "ONE MORE ROUND"
+    },
+    "help": {
+      "pick_spot_title": "Pick a build spot",
+      "pick_spot_body": "Tap a yellow circle in the marketplace.",
+      "deploy_title": "Deploy deterrents",
+      "deploy_body": "Owl, sprinkler, and falconer apply pressure and cost city funds.",
+      "nerve_title": "Nerve, not hit points",
+      "nerve_body": "When tolerance reaches zero, the pigeon flies away. No pigeons are harmed.",
+      "clean_title": "Keep the café clean",
+      "clean_body": "Every pigeon reaching its destination costs cleanliness. Survive five waves and Rüdiger.",
+      "support": "Support",
+      "privacy": "Privacy",
+      "title": "How to shoo",
+      "done": "Got it"
+    },
+    "toast": {
+      "wave_already_running": "Pigeons are already inbound.",
+      "pick_spot_first": "Tap a yellow build spot first.",
+      "defense_ready": "{defense} is ready for duty!",
+      "spot_occupied": "This build spot is already occupied.",
+      "mass_panic": "MASS PANIC!",
+      "combo": "COO COMBO ×{count}",
+      "reward": "+{reward} · Nerve lost",
+      "boss_warning": "TOO LOW, RÜDIGER!",
+      "wave_complete": "Wave cleared. The city breathes easy.",
+      "victory": "PIGEON-FREE ZONE!",
+      "defeat": "The café was coo-nquered.",
+      "funds_needed": "{remaining} more city budget needed.",
+      "cannot_build": "{defense} cannot be built here right now."
+    },
+    "accessibility": {
+      "pigeon_close": "Close pigeon details"
+    },
+    "debug": {
+      "spot": "Test build spot {id}",
+      "select_pigeon": "Select pigeon"
+    }
+  }
+}

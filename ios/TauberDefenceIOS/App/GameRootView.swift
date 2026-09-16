@@ -3,7 +3,12 @@ import TauberDefenceCore
 
 struct GameRootView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @State private var model = GameViewModel()
+    @EnvironmentObject private var localization: AppLocalization
+    @State private var model: GameViewModel
+
+    init(localization: AppLocalization) {
+        _model = State(initialValue: GameViewModel(localization: localization))
+    }
 
     var body: some View {
         ZStack {
@@ -65,16 +70,16 @@ struct GameRootView: View {
             switch model.session.phase {
             case .victory:
                 ResultOverlay(
-                    title: "TAUBENFREIE ZONE!",
-                    message: "Rüdiger und seine Gefolgschaft haben die Nerven verloren.",
+                    title: localization.t("result.victory_title"),
+                    message: localization.t("result.victory_message"),
                     symbol: "trophy.fill",
                     tint: GameTheme.yellow,
                     onRestart: model.reset
                 )
             case .defeat:
                 ResultOverlay(
-                    title: "CAFÉ ÜBERGURRT",
-                    message: "Die Stadtreinigung braucht eine zweite Schicht.",
+                    title: localization.t("result.defeat_title"),
+                    message: localization.t("result.defeat_message"),
                     symbol: "cup.and.saucer.fill",
                     tint: GameTheme.coral,
                     onRestart: model.reset
@@ -112,6 +117,7 @@ struct GameRootView: View {
 
 #if DEBUG
 private struct UITestControlStrip: View {
+    @EnvironmentObject private var localization: AppLocalization
     let session: GameSession
     let onSelectSpot: (Int) -> Void
     let onSelectPigeon: () -> Void
@@ -122,12 +128,12 @@ private struct UITestControlStrip: View {
                 ForEach(session.buildSpots) { spot in
                     Button("\(spot.id)") { onSelectSpot(spot.id) }
                         .disabled(spot.isOccupied)
-                        .accessibilityLabel("Test-Bauplatz \(spot.id)")
+                        .accessibilityLabel(localization.t("debug.spot", ["id": spot.id]))
                         .accessibilityIdentifier("ui-test.spot.\(spot.id)")
                 }
             }
 
-            Button("Taube wählen", action: onSelectPigeon)
+            Button(localization.t("debug.select_pigeon"), action: onSelectPigeon)
                 .disabled(session.pigeons.isEmpty)
                 .accessibilityIdentifier("ui-test.pigeon")
         }

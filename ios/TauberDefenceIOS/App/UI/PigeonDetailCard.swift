@@ -2,6 +2,7 @@ import SwiftUI
 import TauberDefenceCore
 
 struct PigeonDetailCard: View {
+    @EnvironmentObject private var localization: AppLocalization
     let pigeon: Pigeon
     let onClose: () -> Void
 
@@ -9,9 +10,9 @@ struct PigeonDetailCard: View {
         VStack(alignment: .leading, spacing: 9) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(pigeon.type == .ruediger ? "RÜDIGER" : "STADTTAUBE")
+                    Text(pigeon.type.localizedName(using: localization).uppercased())
                         .font(.system(.title3, design: .rounded, weight: .black))
-                    Text(pigeon.type == .ruediger ? "Veteran Pigeon" : "Gelegenheitsgurrer")
+                    Text(pigeon.type.localizedSubtitle(using: localization))
                         .font(.system(size: 11, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.58))
                 }
@@ -23,13 +24,22 @@ struct PigeonDetailCard: View {
                         .background(.white.opacity(0.1), in: Circle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(localization.t("accessibility.pigeon_close"))
             }
 
             VStack(alignment: .leading, spacing: 5) {
                 HStack {
-                    Text("NERVEN")
+                    Text(localization.t("pigeon.nerve"))
                     Spacer()
-                    Text("\(Int(pigeon.currentTolerance.rounded())) / \(Int(pigeon.maxTolerance.rounded()))")
+                    Text(
+                        localization.t(
+                            "pigeon.tolerance_value",
+                            [
+                                "current": Int(pigeon.currentTolerance.rounded()),
+                                "maximum": Int(pigeon.maxTolerance.rounded()),
+                            ]
+                        )
+                    )
                         .contentTransition(.numericText())
                 }
                 .font(.system(size: 10, weight: .black, design: .rounded))
@@ -52,13 +62,18 @@ struct PigeonDetailCard: View {
 
     private var statusText: String {
         switch pigeon.state {
-        case .spawning: "landet ungebeten"
-        case .moving: pigeon.toleranceFraction > 0.7 ? "absolut unbeeindruckt" : "mildly concerned"
-        case .alert: "wird misstrauisch"
-        case .panicking: "kennt plötzlich Angst"
-        case .fleeing: "verliert die Nerven"
-        case .reachedTarget: "hat Hausverbot"
-        case .removed: "schon weg"
+        case .spawning: localization.t("pigeon.status.spawning")
+        case .moving:
+            localization.t(
+                pigeon.toleranceFraction > 0.7
+                    ? "pigeon.status.unimpressed"
+                    : "pigeon.status.concerned"
+            )
+        case .alert: localization.t("pigeon.status.alert")
+        case .panicking: localization.t("pigeon.status.panicking")
+        case .fleeing: localization.t("pigeon.status.fleeing")
+        case .reachedTarget: localization.t("pigeon.status.reached_target")
+        case .removed: localization.t("pigeon.status.removed")
         }
     }
 

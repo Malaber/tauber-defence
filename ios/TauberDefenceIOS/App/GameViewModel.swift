@@ -7,6 +7,7 @@ import TauberDefenceCore
 final class GameViewModel {
     private var simulation: GameSimulation
     private let feedback: GameFeedback
+    private let localization: AppLocalization
     let launchOptions: AutomationLaunchOptions
 
     private(set) var session: GameSession
@@ -15,7 +16,11 @@ final class GameViewModel {
     var toast: GameToast?
     var isShowingHelp = false
 
-    init(launchOptions: AutomationLaunchOptions = .current) {
+    init(
+        localization: AppLocalization,
+        launchOptions: AutomationLaunchOptions = .current
+    ) {
+        self.localization = localization
         self.launchOptions = launchOptions
         let simulation = AutomationFixtureFactory.makeSimulation(for: launchOptions)
         self.simulation = simulation
@@ -62,7 +67,7 @@ final class GameViewModel {
 
     func startNextWave() {
         guard simulation.startNextWave() else {
-            showToast("Die Tauben sind schon unterwegs.", symbol: "bird.fill")
+            showToast(localization.t("toast.wave_already_running"), symbol: "bird.fill")
             return
         }
         commitSnapshot()
@@ -70,7 +75,7 @@ final class GameViewModel {
 
     func purchase(_ type: DefenseType) {
         guard let selectedBuildSpotID else {
-            showToast("Erst einen gelben Bauplatz antippen.", symbol: "hand.tap.fill")
+            showToast(localization.t("toast.pick_spot_first"), symbol: "hand.tap.fill")
             return
         }
 
@@ -78,7 +83,13 @@ final class GameViewModel {
             _ = try simulation.purchaseDefense(type, at: selectedBuildSpotID)
             self.selectedBuildSpotID = nil
             commitSnapshot()
-            showToast("\(type.displayName) ist einsatzbereit!", symbol: type.iconName)
+            showToast(
+                localization.t(
+                    "toast.defense_ready",
+                    ["defense": type.localizedName(using: localization)]
+                ),
+                symbol: type.iconName
+            )
         } catch {
             showToast(purchaseMessage(for: type), symbol: "eurosign.circle.fill")
         }
@@ -88,7 +99,7 @@ final class GameViewModel {
         guard let spot = session.buildSpots.first(where: { $0.id == id }) else { return }
         selectedPigeonID = nil
         if spot.isOccupied {
-            showToast("Dieser Bauplatz ist schon belegt.", symbol: "exclamationmark.triangle.fill")
+            showToast(localization.t("toast.spot_occupied"), symbol: "exclamationmark.triangle.fill")
             selectedBuildSpotID = nil
         } else {
             selectedBuildSpotID = id
@@ -158,26 +169,35 @@ final class GameViewModel {
         }
 
         if newlyFleeing.count >= 10 {
-            showToast("MASSENPANIK!", symbol: "wind")
+            showToast(localization.t("toast.mass_panic"), symbol: "wind")
         } else if newlyFleeing.count >= 2 {
-            showToast("GURR COMBO x\(newlyFleeing.count)", symbol: "sparkles")
+            showToast(
+                localization.t("toast.combo", ["count": newlyFleeing.count]),
+                symbol: "sparkles"
+            )
         } else if let pigeon = newlyFleeing.first {
-            showToast("+ €\(pigeon.reward) · Nerven verloren", symbol: "eurosign.circle.fill")
+            showToast(
+                localization.t(
+                    "toast.reward",
+                    ["reward": localization.format(euros: pigeon.reward)]
+                ),
+                symbol: "eurosign.circle.fill"
+            )
         }
 
         let previousIDs = Set(previous.pigeons.map(\.id))
         if updated.pigeons.contains(where: { $0.type == .ruediger && !previousIDs.contains($0.id) }) {
-            showToast("NICHT SO TIEF RÜDIGER!", symbol: "exclamationmark.triangle.fill")
+            showToast(localization.t("toast.boss_warning"), symbol: "exclamationmark.triangle.fill")
         }
 
         if previous.phase != updated.phase {
             switch updated.phase {
             case .waveComplete:
-                showToast("Welle geschafft. Die Stadt atmet auf.", symbol: "checkmark.seal.fill")
+                showToast(localization.t("toast.wave_complete"), symbol: "checkmark.seal.fill")
             case .victory:
-                showToast("TAUBENFREIE ZONE!", symbol: "trophy.fill")
+                showToast(localization.t("toast.victory"), symbol: "trophy.fill")
             case .defeat:
-                showToast("Das Café wurde übergurrt.", symbol: "cup.and.saucer.fill")
+                showToast(localization.t("toast.defeat"), symbol: "cup.and.saucer.fill")
             case .preparing, .waveRunning:
                 break
             }
@@ -186,9 +206,15 @@ final class GameViewModel {
 
     private func purchaseMessage(for type: DefenseType) -> String {
         if session.money < type.cost {
-            return "Noch €\(type.cost - session.money) Stadtbudget nötig."
+            return localization.t(
+                "toast.funds_needed",
+                ["remaining": localization.format(euros: type.cost - session.money)]
+            )
         }
-        return "Hier kann \(type.displayName) gerade nicht gebaut werden."
+        return localization.t(
+            "toast.cannot_build",
+            ["defense": type.localizedName(using: localization)]
+        )
     }
 
     private func showToast(_ message: String, symbol: String) {

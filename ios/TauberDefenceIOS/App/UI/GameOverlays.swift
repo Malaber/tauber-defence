@@ -16,6 +16,7 @@ struct GameToastView: View {
 }
 
 struct PauseOverlay: View {
+    @EnvironmentObject private var localization: AppLocalization
     let onResume: () -> Void
     let onRestart: () -> Void
 
@@ -24,14 +25,14 @@ struct PauseOverlay: View {
             Image(systemName: "pause.circle.fill")
                 .font(.system(size: 42, weight: .black))
                 .foregroundStyle(GameTheme.yellow)
-            Text("KURZE GURR-PAUSE")
+            Text(localization.t("pause.title"))
                 .font(.system(.title2, design: .rounded, weight: .black))
                 .accessibilityIdentifier("pause.overlay")
 
             HStack(spacing: 10) {
-                Button("Neu starten", action: onRestart)
+                Button(localization.t("pause.restart"), action: onRestart)
                     .buttonStyle(SecondaryGameButtonStyle())
-                Button("Weiter", action: onResume)
+                Button(localization.t("pause.continue"), action: onResume)
                     .buttonStyle(PrimaryGameButtonStyle())
                     .accessibilityIdentifier("pause.resume")
             }
@@ -42,6 +43,7 @@ struct PauseOverlay: View {
 }
 
 struct ResultOverlay: View {
+    @EnvironmentObject private var localization: AppLocalization
     let title: String
     let message: String
     let symbol: String
@@ -61,9 +63,10 @@ struct ResultOverlay: View {
                 .font(.system(.body, design: .rounded, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.68))
                 .multilineTextAlignment(.center)
-            Button("NOCH EINE RUNDE", action: onRestart)
+            Button(localization.t("result.restart"), action: onRestart)
                 .buttonStyle(PrimaryGameButtonStyle())
                 .padding(.top, 4)
+                .accessibilityIdentifier("result.restart")
         }
         .padding(28)
         .frame(maxWidth: 440)
@@ -73,22 +76,45 @@ struct ResultOverlay: View {
 
 struct HowToPlayView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var localization: AppLocalization
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    HelpRow(symbol: "hand.tap.fill", title: "Bauplatz wählen", text: "Tippe einen gelben Kreis auf dem Marktplatz an.")
-                    HelpRow(symbol: "shield.fill", title: "Abwehr aufstellen", text: "Uhu, Sprinkler und Falkner erzeugen Pressure und kosten Stadtbudget.")
-                    HelpRow(symbol: "bird.fill", title: "Nerven statt Trefferpunkte", text: "Sinkt die Toleranz auf null, fliegt die Taube davon. Keine Taube kommt zu Schaden.")
-                    HelpRow(symbol: "cup.and.saucer.fill", title: "Café sauber halten", text: "Jede Taube am Ziel kostet Sauberkeit. Überstehe fünf Wellen und Rüdiger.")
+                    HelpRow(
+                        symbol: "hand.tap.fill",
+                        title: localization.t("help.pick_spot_title"),
+                        text: localization.t("help.pick_spot_body")
+                    )
+                    HelpRow(
+                        symbol: "shield.fill",
+                        title: localization.t("help.deploy_title"),
+                        text: localization.t("help.deploy_body")
+                    )
+                    HelpRow(
+                        symbol: "bird.fill",
+                        title: localization.t("help.nerve_title"),
+                        text: localization.t("help.nerve_body")
+                    )
+                    HelpRow(
+                        symbol: "cup.and.saucer.fill",
+                        title: localization.t("help.clean_title"),
+                        text: localization.t("help.clean_body")
+                    )
 
                     Divider()
                         .overlay(.white.opacity(0.16))
 
                     HStack(spacing: 18) {
-                        Link("Support", destination: URL(string: "https://tauber-defence.malaber.de/support/")!)
-                        Link("Datenschutz", destination: URL(string: "https://tauber-defence.malaber.de/privacy/")!)
+                        Link(
+                            localization.t("help.support"),
+                            destination: URL(string: "https://tauber-defence.malaber.de/support/")!
+                        )
+                        Link(
+                            localization.t("help.privacy"),
+                            destination: URL(string: "https://tauber-defence.malaber.de/privacy/")!
+                        )
                     }
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundStyle(GameTheme.yellow)
@@ -96,10 +122,10 @@ struct HowToPlayView: View {
                 .padding(22)
             }
             .background(GameTheme.ink)
-            .navigationTitle("So wird verscheucht")
+            .navigationTitle(localization.t("help.title"))
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Verstanden") { dismiss() }
+                    Button(localization.t("help.done")) { dismiss() }
                 }
             }
         }

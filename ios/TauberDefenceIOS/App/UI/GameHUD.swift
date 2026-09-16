@@ -2,6 +2,7 @@ import SwiftUI
 import TauberDefenceCore
 
 struct GameHUD: View {
+    @EnvironmentObject private var localization: AppLocalization
     let session: GameSession
     let onPause: () -> Void
     let onHelp: () -> Void
@@ -9,24 +10,37 @@ struct GameHUD: View {
     var body: some View {
         HStack(spacing: 10) {
             HUDMetric(
-                value: "\(session.money) €",
-                label: "STADTBUDGET",
+                value: localization.t(
+                    "hud.money_value",
+                    ["amount": localization.format(number: session.money)]
+                ),
+                label: localization.t("hud.city_budget"),
                 symbol: "eurosign.circle.fill",
                 tint: GameTheme.yellow,
-                identifier: "hud.money"
+                identifier: "hud.money",
+                accessibilityValue: String(session.money)
             )
 
             HUDMetric(
-                value: "\(session.currentWaveNumber ?? 0)/\(session.level.waves.count)",
-                label: "WELLE",
+                value: localization.t(
+                    "hud.wave_value",
+                    [
+                        "current": session.currentWaveNumber ?? 0,
+                        "total": session.level.waves.count,
+                    ]
+                ),
+                label: localization.t("hud.wave"),
                 symbol: "bird.fill",
                 tint: GameTheme.blue,
                 identifier: "hud.wave"
             )
 
             HUDMetric(
-                value: "\(session.cleanliness) %",
-                label: "SAUBERKEIT",
+                value: localization.t(
+                    "hud.cleanliness_value",
+                    ["value": localization.format(number: session.cleanliness)]
+                ),
+                label: localization.t("hud.cleanliness"),
                 symbol: "sparkles",
                 tint: cleanlinessColor,
                 identifier: "hud.cleanliness"
@@ -34,10 +48,14 @@ struct GameHUD: View {
 
             Spacer(minLength: 8)
 
-            CircleButton(symbol: "questionmark", label: "Spielhilfe", action: onHelp)
+            CircleButton(
+                symbol: "questionmark",
+                label: localization.t("hud.help"),
+                action: onHelp
+            )
             CircleButton(
                 symbol: session.isPaused ? "play.fill" : "pause.fill",
-                label: session.isPaused ? "Fortsetzen" : "Pause",
+                label: localization.t(session.isPaused ? "hud.resume" : "hud.pause"),
                 action: onPause
             )
             .accessibilityIdentifier("game.pause")
@@ -57,6 +75,7 @@ private struct HUDMetric: View {
     let symbol: String
     let tint: Color
     let identifier: String
+    var accessibilityValue: String? = nil
 
     var body: some View {
         HStack(spacing: 9) {
@@ -81,6 +100,7 @@ private struct HUDMetric: View {
         .gamePanel()
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(identifier)
+        .accessibilityValue(accessibilityValue ?? value)
     }
 }
 

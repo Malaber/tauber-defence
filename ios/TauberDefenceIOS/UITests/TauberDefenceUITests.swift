@@ -3,6 +3,25 @@ import XCTest
 
 @MainActor
 class TauberDefenceUITestCase: XCTestCase {
+    enum Language {
+        case german
+        case english
+
+        var code: String {
+            switch self {
+            case .german: "de"
+            case .english: "en"
+            }
+        }
+
+        var localeIdentifier: String {
+            switch self {
+            case .german: "de_DE"
+            case .english: "en_US"
+            }
+        }
+    }
+
     enum Fixture: String {
         case `default`
         case battle
@@ -21,6 +40,7 @@ class TauberDefenceUITestCase: XCTestCase {
     @discardableResult
     func launch(
         fixture: Fixture = .default,
+        language: Language = .german,
         marketingScreenshot: Bool = false
     ) -> XCUIApplication {
         XCUIDevice.shared.orientation = .landscapeLeft
@@ -28,12 +48,13 @@ class TauberDefenceUITestCase: XCTestCase {
         app.launchArguments = [
             "--ui-testing",
             "--ui-test-fixture", fixture.rawValue,
-            "-AppleLanguages", "(de)",
-            "-AppleLocale", "de_DE",
+            "-AppleLanguages", "(\(language.code))",
+            "-AppleLocale", language.localeIdentifier,
         ]
         if marketingScreenshot {
             app.launchArguments.append("--marketing-screenshot")
         }
+        app.launchEnvironment["TAUBERDEFENCE_UI_TEST_LANGUAGE"] = language.code
         app.launchEnvironment["TZ"] = "Europe/Berlin"
         app.launch()
         waitForExistence(element("game.city"), timeout: 12)
@@ -126,8 +147,9 @@ class TauberDefenceUITestCase: XCTestCase {
         waitForDisappearance(element("build.menu"), file: file, line: line)
     }
 
-    func money(from label: String) -> Int {
-        let leadingNumber = label
+    func money(from element: XCUIElement) -> Int {
+        let text = (element.value as? String) ?? element.label
+        let leadingNumber = text
             .drop { $0.wholeNumberValue == nil }
             .prefix { $0.wholeNumberValue != nil || $0 == "." }
             .filter { $0.wholeNumberValue != nil }
@@ -196,7 +218,7 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
         XCTAssertTrue(element("hud.money").exists)
         XCTAssertTrue(element("hud.wave").exists)
         XCTAssertTrue(element("hud.cleanliness").exists)
-        XCTAssertGreaterThanOrEqual(money(from: element("hud.money").label), 300)
+        XCTAssertGreaterThanOrEqual(money(from: element("hud.money")), 300)
         XCTAssertTrue(app.buttons["wave.start"].exists)
     }
 
@@ -212,7 +234,7 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
         launch()
 
         let moneyMetric = element("hud.money")
-        var availableMoney = money(from: moneyMetric.label)
+        var availableMoney = money(from: moneyMetric)
         var spot = 1
         while availableMoney >= 100, spot <= 7 {
             let defense: String
@@ -224,7 +246,7 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
                 defense = "plastic-owl"
             }
             purchase(defense, at: spot)
-            availableMoney = money(from: moneyMetric.label)
+            availableMoney = money(from: moneyMetric)
             spot += 1
         }
         XCTAssertLessThan(availableMoney, 100, "Fixture must permit exhausting city budget")
@@ -252,7 +274,7 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
         launch(fixture: .battle)
 
         waitForExistence(element("wave.running"))
-        XCTAssertGreaterThan(money(from: element("hud.money").label), -1)
+        XCTAssertGreaterThan(money(from: element("hud.money")), -1)
         XCTAssertFalse(
             app.buttons["ui-test.spot.1"].exists && app.buttons["ui-test.spot.1"].isEnabled,
             "Battle fixture must start with its first defense already built"
@@ -278,8 +300,7 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
 
         let result = element("game.result")
         waitForExistence(result, timeout: 8)
-        XCTAssertTrue(app.staticTexts["TAUBENFREIE ZONE!"].exists)
-        tap(app.buttons["NOCH EINE RUNDE"])
+        tap(app.buttons["result.restart"])
         waitForDisappearance(result)
         waitForExistence(app.buttons["wave.start"])
     }
@@ -289,18 +310,33 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
 
         let result = element("game.result")
         waitForExistence(result, timeout: 8)
-        XCTAssertTrue(app.staticTexts["CAFÉ ÜBERGURRT"].exists)
+        XCTAssertTrue(result.exists)
+    }
+
+    func testEnglishLocalization() {
+        launch(language: .english)
+
+        XCTAssertEqual(app.buttons["wave.start"].label, "START FIRST WAVE")
+        XCTAssertTrue(element("hud.money").label.contains("CITY BUDGET"))
+        app.terminate()
+
+        launch(fixture: .victory, language: .english)
+
+        let result = element("game.result")
+        waitForExistence(result, timeout: 8)
+        XCTAssertEqual(result.label, "PIGEON-FREE ZONE!")
+        XCTAssertEqual(app.buttons["result.restart"].label, "ONE MORE ROUND")
     }
 }
 
 @MainActor
 final class TauberDefenceMarketingScreenshots: TauberDefenceUITestCase {
     func testAppStoreMarketingScreenshots() {
-        snapshot(.default, indicator: "wave.start", name: "marketing-01-marktplatz")
-        snapshot(.battle, indicator: "wave.running", name: "marketing-02-abwehr-in-aktion")
+        snapshot(.default, indicator: "wave.start", name: "marketing-01-marketplace")
+        snapshot(.battle, indicator: "wave.running", name: "marketing-02-defense-in-action")
         snapshot(.boss, indicator: "wave.running", name: "marketing-03-ruediger")
-        snapshot(.victory, indicator: "game.result", name: "marketing-04-sieg")
-        snapshot(.defeat, indicator: "game.result", name: "marketing-05-niederlage")
+        snapshot(.victory, indicator: "game.result", name: "marketing-04-victory")
+        snapshot(.defeat, indicator: "game.result", name: "marketing-05-defeat")
     }
 
     private func snapshot(_ fixture: Fixture, indicator: String, name: String) {

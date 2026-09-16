@@ -4,13 +4,6 @@ public enum PigeonType: String, CaseIterable, Codable, Hashable, Sendable {
     case normal
     case ruediger
 
-    public var displayName: String {
-        switch self {
-        case .normal: "Stadttaube"
-        case .ruediger: "Rüdiger"
-        }
-    }
-
     public var iconName: String {
         switch self {
         case .normal: "PigeonNormal"
@@ -60,27 +53,11 @@ public enum DefenseType: String, CaseIterable, Codable, Hashable, Sendable {
     case sprinkler
     case falconer
 
-    public var displayName: String {
-        switch self {
-        case .plasticOwl: "Plastik-Uhu"
-        case .sprinkler: "Rasensprenger"
-        case .falconer: "Falkner"
-        }
-    }
-
     public var iconName: String {
         switch self {
         case .plasticOwl: "eye.fill"
         case .sprinkler: "drop.fill"
         case .falconer: "bird.fill"
-        }
-    }
-
-    public var tagline: String {
-        switch self {
-        case .plasticOwl: "Starrt einzelne Tauben streng an."
-        case .sprinkler: "Duscht und bremst ganze Gruppen."
-        case .falconer: "Schickt einen Falken mit Nachdruck."
         }
     }
 
@@ -246,7 +223,7 @@ public struct LevelDefinition: Identifiable, Codable, Hashable, Sendable {
 
     public static let marketplace = LevelDefinition(
         id: "marketplace",
-        name: "Marktplatz",
+        name: "Marketplace",
         path: PathDefinition(waypoints: [
             Waypoint(x: -6, z: 0),
             Waypoint(x: -3, z: 0),
