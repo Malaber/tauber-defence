@@ -55,6 +55,10 @@ pause/resume, prebuilt battle, Rüdiger, victory/restart, and defeat. Fixtures a
 the debug-only `--ui-test-fixture` launch argument; tests use accessibility identifiers and
 observable state instead of animation sleeps.
 
+The `low-budget` fixture starts with €350: one real falconer purchase leaves €50, then the test
+checks that an unaffordable owl leaves the budget unchanged and displays a persistent inline
+error. Purchase failures remain readable until the player changes or closes the build selection.
+
 Capture only the five-shot App Store gallery on both default device families:
 
 ```bash

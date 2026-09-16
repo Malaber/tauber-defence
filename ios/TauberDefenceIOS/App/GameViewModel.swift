@@ -14,6 +14,7 @@ final class GameViewModel {
     var selectedBuildSpotID: Int?
     var selectedPigeonID: Int?
     var toast: GameToast?
+    private(set) var purchaseError: String?
     var isShowingHelp = false
 
     init(
@@ -81,6 +82,7 @@ final class GameViewModel {
 
         do {
             _ = try simulation.purchaseDefense(type, at: selectedBuildSpotID)
+            purchaseError = nil
             self.selectedBuildSpotID = nil
             commitSnapshot()
             showToast(
@@ -91,12 +93,13 @@ final class GameViewModel {
                 symbol: type.iconName
             )
         } catch {
-            showToast(purchaseMessage(for: type), symbol: "eurosign.circle.fill")
+            purchaseError = purchaseMessage(for: type)
         }
     }
 
     func selectBuildSpot(_ id: Int) {
         guard let spot = session.buildSpots.first(where: { $0.id == id }) else { return }
+        purchaseError = nil
         selectedPigeonID = nil
         if spot.isOccupied {
             showToast(localization.t("toast.spot_occupied"), symbol: "exclamationmark.triangle.fill")
@@ -108,6 +111,7 @@ final class GameViewModel {
 
     func selectPigeon(_ id: Int) {
         guard session.pigeons.contains(where: { $0.id == id }) else { return }
+        purchaseError = nil
         selectedBuildSpotID = nil
         selectedPigeonID = selectedPigeonID == id ? nil : id
     }
@@ -119,6 +123,7 @@ final class GameViewModel {
     }
 
     func dismissSelection() {
+        purchaseError = nil
         selectedBuildSpotID = nil
         selectedPigeonID = nil
     }
@@ -139,6 +144,7 @@ final class GameViewModel {
         selectedBuildSpotID = nil
         selectedPigeonID = nil
         toast = nil
+        purchaseError = nil
         commitSnapshot()
     }
 

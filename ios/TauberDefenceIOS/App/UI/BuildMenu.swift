@@ -4,10 +4,29 @@ import TauberDefenceCore
 struct BuildMenu: View {
     @EnvironmentObject private var localization: AppLocalization
     let session: GameSession
+    let purchaseError: String?
     let onPurchase: (DefenseType) -> Void
     let onClose: () -> Void
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            purchaseControls
+
+            if let purchaseError {
+                Label(purchaseError, systemImage: "eurosign.circle.fill")
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(GameTheme.coral)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(purchaseError)
+                    .accessibilityIdentifier("build.error")
+            }
+        }
+        .padding(12)
+        .gamePanel()
+        .frame(maxWidth: 760)
+    }
+
+    private var purchaseControls: some View {
         HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(localization.t("build.agency"))
@@ -37,9 +56,6 @@ struct BuildMenu: View {
             .buttonStyle(.plain)
             .accessibilityLabel(localization.t("build.close"))
         }
-        .padding(12)
-        .gamePanel()
-        .frame(maxWidth: 760)
     }
 }
 

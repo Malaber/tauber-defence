@@ -46,9 +46,12 @@ struct GameRootView: View {
                 }
 
                 if model.selectedBuildSpot != nil {
-                    BuildMenu(session: model.session, onPurchase: model.purchase) {
-                        model.selectedBuildSpotID = nil
-                    }
+                    BuildMenu(
+                        session: model.session,
+                        purchaseError: model.purchaseError,
+                        onPurchase: model.purchase,
+                        onClose: model.dismissSelection
+                    )
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else {
                     WaveControl(session: model.session, onStart: model.startNextWave)

@@ -24,6 +24,7 @@ class TauberDefenceUITestCase: XCTestCase {
 
     enum Fixture: String {
         case `default`
+        case lowBudget = "low-budget"
         case battle
         case boss
         case victory
@@ -231,31 +232,21 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
     }
 
     func testInsufficientFundsPreservesBudgetAndShowsFeedback() {
-        launch()
+        launch(fixture: .lowBudget)
 
         let moneyMetric = element("hud.money")
-        var availableMoney = money(from: moneyMetric)
-        var spot = 1
-        while availableMoney >= 100, spot <= 7 {
-            let defense: String
-            if availableMoney >= 300 {
-                defense = "falconer"
-            } else if availableMoney >= 150 {
-                defense = "sprinkler"
-            } else {
-                defense = "plastic-owl"
-            }
-            purchase(defense, at: spot)
-            availableMoney = money(from: moneyMetric)
-            spot += 1
-        }
-        XCTAssertLessThan(availableMoney, 100, "Fixture must permit exhausting city budget")
+        XCTAssertEqual(money(from: moneyMetric), 350)
+        purchase("falconer", at: 1)
+        XCTAssertEqual(money(from: moneyMetric), 50)
 
         let exhaustedLabel = moneyMetric.label
-        openBuildMenu(at: spot)
+        openBuildMenu(at: 2)
         tap(app.buttons["build.plastic-owl"])
+        let error = element("build.error")
+        waitForExistence(error)
+        XCTAssertTrue(error.label.contains("50"), "Feedback must show the missing budget")
         XCTAssertEqual(moneyMetric.label, exhaustedLabel)
-        XCTAssertTrue(element("game.toast").waitForExistence(timeout: 2))
+        XCTAssertTrue(element("build.menu").exists)
     }
 
     func testWaveStartsPausesAndResumes() {

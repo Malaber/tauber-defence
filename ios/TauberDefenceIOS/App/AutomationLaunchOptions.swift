@@ -5,6 +5,7 @@ import TauberDefenceCore
 struct AutomationLaunchOptions: Equatable {
     enum Fixture: String {
         case `default`
+        case lowBudget = "low-budget"
         case battle
         case boss
         case victory
@@ -68,6 +69,12 @@ enum AutomationFixtureFactory {
                 configuration: automationConfiguration()
             )
 
+        case .lowBudget:
+            return GameSimulation(
+                level: .marketplace,
+                configuration: automationConfiguration(startingMoney: 350)
+            )
+
         case .battle:
             var simulation = GameSimulation(
                 level: .marketplace,
@@ -114,10 +121,11 @@ enum AutomationFixtureFactory {
     }
 
     private static func automationConfiguration(
+        startingMoney: Int = 1_000,
         startingCleanliness: Int = 100
     ) -> SimulationConfiguration {
         SimulationConfiguration(
-            startingMoney: 1_000,
+            startingMoney: startingMoney,
             startingCleanliness: startingCleanliness
         )
     }
