@@ -3,7 +3,7 @@ import TauberDefenceCore
 
 final class EconomyAndDefenseSystemTests: XCTestCase {
     func testDefenseCatalogUsesVerticalSliceBalanceValues() {
-        XCTAssertEqual(DefenseType.allCases, [.plasticOwl, .sprinkler, .falconer])
+        XCTAssertEqual(Array(DefenseType.allCases.prefix(3)), [.plasticOwl, .sprinkler, .falconer])
 
         XCTAssertEqual(DefenseType.plasticOwl.cost, 100)
         XCTAssertEqual(DefenseType.plasticOwl.range, 2.8)

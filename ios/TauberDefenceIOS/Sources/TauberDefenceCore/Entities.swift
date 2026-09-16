@@ -13,6 +13,9 @@ public struct Pigeon: Identifiable, Codable, Hashable, Sendable {
     public internal(set) var flightHeight: Double
     public internal(set) var stateElapsedTime: Double
     internal var slowedUntil: Double
+    internal var appliedSlowFraction = 0.2
+    public internal(set) var disruptedUntil = 0.0
+    public internal(set) var lastPressureCategory: PressureCategory?
 
     public init(
         id: Int,
@@ -49,7 +52,23 @@ public struct Pigeon: Identifiable, Codable, Hashable, Sendable {
     }
 
     public func speedMultiplier(at simulationTime: Double) -> Double {
-        simulationTime < slowedUntil ? 0.8 : 1.0
+        simulationTime < slowedUntil ? 1 - appliedSlowFraction : 1.0
+    }
+
+    public func pressureMultiplier(category: PressureCategory, nearby: [Pigeon], at time: Double) -> Double {
+        var multiplier = 1.0
+        if type == .volker && lastPressureCategory == category { multiplier *= 0.55 }
+        if category == .sound && lastPressureCategory == .sound { multiplier *= 0.7 }
+        if category == .sound && lastPressureCategory != nil && lastPressureCategory != .sound { multiplier *= 1.3 }
+        guard time >= disruptedUntil else { return multiplier }
+        let allies = nearby.filter {
+            $0.id != id && $0.isTargetable && time >= $0.disruptedUntil && $0.position.distance(to: position) <= 2.5
+        }
+        if allies.contains(where: { $0.type == .ingo }) { multiplier *= 0.8 }
+        if type == .coalition && allies.contains(where: { $0.type == .coalition }) { multiplier *= 0.7 }
+        if time.truncatingRemainder(dividingBy: 6) < 2.2 &&
+            (type == .gurrmann || allies.contains(where: { $0.type == .gurrmann })) { multiplier *= 0.5 }
+        return multiplier
     }
 }
 

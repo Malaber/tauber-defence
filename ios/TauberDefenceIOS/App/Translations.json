@@ -28,6 +28,30 @@
         "fleeing": "verliert die Nerven",
         "reached_target": "hat Hausverbot",
         "removed": "schon weg"
+      },
+      "dieter": {
+        "name": "Dicker Dieter",
+        "subtitle": "Langsam, 280 Nerven. Nennt es Wintergefieder. Es ist Juli."
+      },
+      "sabine": {
+        "name": "Späher-Sabine",
+        "subtitle": "Schnell, dünne Nerven. Café schon bewertet: ein Stern, keine Krümel."
+      },
+      "volker": {
+        "name": "Veteran Volker",
+        "subtitle": "Wiederholte Druckarten wirken 45 % schwächer. Kennt jeden Plastik-Uhu persönlich."
+      },
+      "ingo": {
+        "name": "Influencer Ingo",
+        "subtitle": "Nachbarn erhalten 20 % weniger Druck. Besetzung gesponsert von Brotkrumen."
+      },
+      "gurrmann": {
+        "name": "Amtsleiter Gurrmann",
+        "subtitle": "Alle 6 Sekunden kurz 50 % Schutz für die Gruppe. Formular GURR-17 fehlt."
+      },
+      "coalition": {
+        "name": "Krümel-Koalition",
+        "subtitle": "Zusammen 30 % weniger Druck. Starke Mehrheit, keine Tischmanieren."
       }
     },
     "defense": {
@@ -42,6 +66,30 @@
       "falconer": {
         "name": "Falkner",
         "tagline": "Schickt einen Falken mit Nachdruck."
+      },
+      "windowCD": {
+        "name": "CD am Fenster",
+        "tagline": "Billiger Einzeldruck. Greatest Hits gegen Tauben."
+      },
+      "flutterTape": {
+        "name": "Flatterband",
+        "tagline": "Unterbricht Gruppenschutz. Amtlich beunruhigend seit 2008."
+      },
+      "broomOfficer": {
+        "name": "Besen-Beauftragte",
+        "tagline": "Kurze, kräftige Gruppenstöße. Fegt auch Schutzboni weg."
+      },
+      "speaker": {
+        "name": "Balkon-Bluetoothbox",
+        "tagline": "Gruppendruck + Störung. Abwechslung wirkt, Wiederholung nervt weniger."
+      },
+      "paperwork": {
+        "name": "Formularwerfer",
+        "tagline": "Bremst eine Taube um 50 %. Bitte hier für die Warteschlange anstehen."
+      },
+      "decoy": {
+        "name": "Premium-Krümelattrappe",
+        "tagline": "Bremst Gruppen um 65 %, kein Druck. Bio-Krümel ohne Nährwert."
       }
     },
     "hud": {
@@ -60,7 +108,8 @@
       "title": "Abwehr aufstellen",
       "close": "Baumenü schließen",
       "price_tagline": "{price} · {tagline}",
-      "accessibility": "{defense}, {price}"
+      "accessibility": "{defense}, {price}",
+      "browse": "Wischen für alle 9 Werkzeuge →"
     },
     "wave": {
       "boss_inbound": "RÜDIGER IST UNTERWEGS",
@@ -79,17 +128,18 @@
       "victory_message": "Rüdiger und seine Gefolgschaft haben die Nerven verloren.",
       "defeat_title": "CAFÉ ÜBERGURRT",
       "defeat_message": "Die Stadtreinigung braucht eine zweite Schicht.",
-      "restart": "NOCH EINE RUNDE"
+      "restart": "NOCH EINE RUNDE",
+      "xp": "+{xp} XP · Dienst ist Dienst."
     },
     "help": {
       "pick_spot_title": "Bauplatz wählen",
       "pick_spot_body": "Tippe einen gelben Kreis auf dem Marktplatz an.",
       "deploy_title": "Abwehr aufstellen",
-      "deploy_body": "Uhu, Sprinkler und Falkner erzeugen Druck und kosten Stadtbudget.",
+      "deploy_body": "Neun Werkzeuge stehen bereit. Gruppenschutz mit Flatterband, Besen oder Musik stören; gegen Volker Druckarten mischen.",
       "nerve_title": "Nerven statt Trefferpunkte",
       "nerve_body": "Sinkt die Toleranz auf null, fliegt die Taube davon. Keine Taube kommt zu Schaden.",
       "clean_title": "Café sauber halten",
-      "clean_body": "Jede Taube am Ziel kostet Sauberkeit. Überstehe fünf Wellen und Rüdiger.",
+      "clean_body": "Jede Taube am Ziel kostet Sauberkeit. Klassisch: fünf Wellen. Feldversuch: sechs Wellen voller Personalprobleme.",
       "support": "Support",
       "privacy": "Datenschutz",
       "title": "So wird verscheucht",
@@ -116,6 +166,36 @@
     "debug": {
       "spot": "Test-Bauplatz {id}",
       "select_pigeon": "Taube wählen"
+    },
+    "board": {
+      "spot": "Bauplatz {id}"
+    },
+    "camera": {
+      "in": "Vergrößern",
+      "out": "Verkleinern",
+      "rotate": "Kamera drehen",
+      "reset": "Kamera zurücksetzen",
+      "title": "Kamera",
+      "help": "Mit zwei Fingern zoomen oder drehen. Ziehen dreht ebenfalls. Die Kameratasten helfen beim genauen Ausrichten."
+    },
+    "menu": {
+      "agency": "AMT FÜR ANGEWANDTE TAUBOLOGIE",
+      "tagline": "Die Stadt hat ein Problem. Das Problem hat Flügel.",
+      "guide": "Taubenakte & Werkzeugkiste",
+      "rank": "Dienstgrad {rank} · Krümelaufsicht",
+      "xp": "{xp} XP",
+      "stats": "{wins} Siege · Beste Welle {wave} · {birds} verscheucht",
+      "trials": "FELDVERSUCH STARTEN",
+      "trials_detail": "8 Taubenarten · 9 Werkzeuge · 1.200 € Budget",
+      "classic": "KLASSISCHER MARKTPLATZ",
+      "local": "Fortschritt nur auf diesem Gerät. XP nach Runde oder Rückkehr ins Menü. Keine Spielsperren.",
+      "back": "ZUM HAUPTMENÜ"
+    },
+    "guide": {
+      "pigeons": "Die üblichen Verdächtigen",
+      "defenses": "Kommunale Gegenmaßnahmen",
+      "bird_stats": "{nerve} Nerven · Tempo {speed} · {reward} € Belohnung",
+      "defense_stats": "{cost} € · {pressure} Druck · {range} Reichweite"
     }
   },
   "en": {
@@ -147,6 +227,30 @@
         "fleeing": "losing its nerve",
         "reached_target": "banned from the premises",
         "removed": "already gone"
+      },
+      "dieter": {
+        "name": "Big Dieter",
+        "subtitle": "Slow, 280 nerve. Calls it winter plumage. It is July."
+      },
+      "sabine": {
+        "name": "Scout Sabine",
+        "subtitle": "Fast, fragile nerve. Already reviewed the café: one star, no crumbs."
+      },
+      "volker": {
+        "name": "Veteran Volker",
+        "subtitle": "Repeated pressure categories are 45% weaker. Knows every plastic owl personally."
+      },
+      "ingo": {
+        "name": "Influencer Ingo",
+        "subtitle": "Nearby allies take 20% less pressure. Occupation sponsored by breadcrumbs."
+      },
+      "gurrmann": {
+        "name": "Director Gurrmann",
+        "subtitle": "Brief 50% group shield every 6 seconds. Your Form COO-17 is missing."
+      },
+      "coalition": {
+        "name": "Crumb Coalition",
+        "subtitle": "30% less pressure while together. Strong majority, zero table manners."
       }
     },
     "defense": {
@@ -161,6 +265,30 @@
       "falconer": {
         "name": "Falconer",
         "tagline": "Dispatches a falcon with authority."
+      },
+      "windowCD": {
+        "name": "Window CD",
+        "tagline": "Cheap single-target pressure. Greatest Hits Against Pigeons."
+      },
+      "flutterTape": {
+        "name": "Alarm tape",
+        "tagline": "Disrupts group protection. Officially alarming since 2008."
+      },
+      "broomOfficer": {
+        "name": "Broom officer",
+        "tagline": "Strong close-range bursts. Sweeps away group protection too."
+      },
+      "speaker": {
+        "name": "Balcony speaker",
+        "tagline": "Area pressure + disruption. Mix pressure types; repetition grows stale."
+      },
+      "paperwork": {
+        "name": "Form launcher",
+        "tagline": "Slows one pigeon by 50%. Please queue here for the queue."
+      },
+      "decoy": {
+        "name": "Premium crumb decoy",
+        "tagline": "Slows groups by 65%, no pressure. Artisan crumbs, zero nutrition."
       }
     },
     "hud": {
@@ -179,7 +307,8 @@
       "title": "Deploy deterrent",
       "close": "Close build menu",
       "price_tagline": "{price} · {tagline}",
-      "accessibility": "{defense}, {price}"
+      "accessibility": "{defense}, {price}",
+      "browse": "Swipe for all 9 tools →"
     },
     "wave": {
       "boss_inbound": "RÜDIGER IS ON HIS WAY",
@@ -198,17 +327,18 @@
       "victory_message": "Rüdiger and his entourage have lost their nerve.",
       "defeat_title": "CAFÉ COO-NQUERED",
       "defeat_message": "The street-cleaning crew needs a second shift.",
-      "restart": "ONE MORE ROUND"
+      "restart": "ONE MORE ROUND",
+      "xp": "+{xp} XP · All in a day's coo."
     },
     "help": {
       "pick_spot_title": "Pick a build spot",
       "pick_spot_body": "Tap a yellow circle in the marketplace.",
       "deploy_title": "Deploy deterrents",
-      "deploy_body": "Owl, sprinkler, and falconer apply pressure and cost city funds.",
+      "deploy_body": "Nine tools available. Disrupt group protection with tape, broom, or music; mix pressure types against Volker.",
       "nerve_title": "Nerve, not hit points",
       "nerve_body": "When tolerance reaches zero, the pigeon flies away. No pigeons are harmed.",
       "clean_title": "Keep the café clean",
-      "clean_body": "Every pigeon reaching its destination costs cleanliness. Survive five waves and Rüdiger.",
+      "clean_body": "Every arrival costs cleanliness. Classic: five waves. Field trials: six waves of personnel problems.",
       "support": "Support",
       "privacy": "Privacy",
       "title": "How to shoo",
@@ -235,6 +365,36 @@
     "debug": {
       "spot": "Test build spot {id}",
       "select_pigeon": "Select pigeon"
+    },
+    "board": {
+      "spot": "Build spot {id}"
+    },
+    "camera": {
+      "in": "Zoom in",
+      "out": "Zoom out",
+      "rotate": "Rotate camera",
+      "reset": "Reset camera",
+      "title": "Camera",
+      "help": "Pinch to zoom, twist to rotate. Dragging also rotates. Camera buttons help with precise adjustments."
+    },
+    "menu": {
+      "agency": "DEPARTMENT OF APPLIED PIGEONOLOGY",
+      "tagline": "The city has a problem. The problem has wings.",
+      "guide": "Pigeon files & toolbox",
+      "rank": "Rank {rank} · Crumb inspector",
+      "xp": "{xp} XP",
+      "stats": "{wins} wins · Best wave {wave} · {birds} shooed",
+      "trials": "START FIELD TRIALS",
+      "trials_detail": "8 pigeon types · 9 tools · €1,200 budget",
+      "classic": "CLASSIC MARKETPLACE",
+      "local": "Progress stays on this device. XP at round end or return to menu. Nothing locked.",
+      "back": "MAIN MENU"
+    },
+    "guide": {
+      "pigeons": "The usual suspects",
+      "defenses": "Municipal countermeasures",
+      "bird_stats": "{nerve} nerve · Speed {speed} · €{reward} reward",
+      "defense_stats": "€{cost} · {pressure} pressure · {range} range"
     }
   }
 }

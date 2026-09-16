@@ -29,7 +29,7 @@ export default function PrivacyPage() {
           </section>
           <section>
             <h2>Spieldaten</h2>
-            <p>Der aktuelle Spielzustand – etwa Budget, Sauberkeit, Wellen und platzierte Abwehr – wird für die laufende Partie im Arbeitsspeicher verarbeitet. Der aktuelle Build speichert diese Daten nicht dauerhaft und überträgt sie nicht.</p>
+            <p>Die laufende Partie – Budget, Sauberkeit, Wellen und platzierte Abwehr – bleibt im Arbeitsspeicher. Erfahrungspunkte, Dienstgrad, Siege, beste abgeschlossene Welle und verscheuchte Tauben werden lokal auf deinem Gerät gespeichert. Es gibt kein Konto, keine Übertragung an uns und keine Cloud-Synchronisierung durch die App. Nach dem Löschen der App kann dieser Fortschritt verloren gehen.</p>
           </section>
           <section>
             <h2>Netzwerk und Drittanbieter</h2>

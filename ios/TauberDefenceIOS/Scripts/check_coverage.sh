@@ -26,6 +26,7 @@ fi
 
 binary=$(find "$package_dir/.build" -type f \( \
   -name 'TauberDefenceIOSPackageTests.xctest' -o \
+  -path '*/TauberDefenceCoreTests.xctest/Contents/MacOS/TauberDefenceCoreTests' -o \
   -path '*/TauberDefenceIOSPackageTests.xctest/Contents/MacOS/TauberDefenceIOSPackageTests' \
 \) -print | sort | head -n 1)
 if [[ -z "$binary" ]]; then

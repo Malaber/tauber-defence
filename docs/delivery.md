@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Swift 6 and Xcode 26 with an iOS 18-or-newer simulator runtime
+- Swift 6 and a compatible Xcode installation with an iOS 18-or-newer simulator runtime. Local delivery on macOS 27 uses Xcode 27; CI currently uses Xcode 26.
 - XcodeGen 2.38 or newer
 - Python 3.11 or newer
 - Invoke 2.2.0, installed through the repository's editable development package
@@ -107,6 +107,10 @@ identifier selects App Store Connect app `6812439777`. The script uses a system-
 does not support an extended-attribute option used by Xcode packaging and can otherwise cause an
 opaque `exportArchive Copy failed` error. Archive/export logs and the signed archive remain at the
 printed temporary path.
+
+An Apple `Upload succeeded` response completes delivery. Do not wait for or poll TestFlight
+processing unless investigating a problem reported by the user. Retain the archive and upload log
+under ignored `e2e-artifacts/` before temporary files are cleaned up.
 
 ## Automatic TestFlight delivery
 

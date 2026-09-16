@@ -74,8 +74,7 @@ extension DefenseType {
     private var localizationKey: String {
         switch self {
         case .plasticOwl: "plastic_owl"
-        case .sprinkler: "sprinkler"
-        case .falconer: "falconer"
+        default: rawValue
         }
     }
 }
@@ -93,8 +92,7 @@ extension PigeonType {
 
     private var localizationKey: String {
         switch self {
-        case .normal: "normal"
-        case .ruediger: "ruediger"
+        default: rawValue
         }
     }
 }

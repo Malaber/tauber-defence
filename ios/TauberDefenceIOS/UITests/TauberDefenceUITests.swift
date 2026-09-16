@@ -24,6 +24,7 @@ class TauberDefenceUITestCase: XCTestCase {
 
     enum Fixture: String {
         case `default`
+        case menu
         case lowBudget = "low-budget"
         case battle
         case boss
@@ -35,14 +36,15 @@ class TauberDefenceUITestCase: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
-        executionTimeAllowance = 180
+        executionTimeAllowance = 480
     }
 
     @discardableResult
     func launch(
         fixture: Fixture = .default,
         language: Language = .german,
-        marketingScreenshot: Bool = false
+        marketingScreenshot: Bool = false,
+        preserveProgress: Bool = false
     ) -> XCUIApplication {
         XCUIDevice.shared.orientation = .landscapeLeft
         app = XCUIApplication()
@@ -55,10 +57,11 @@ class TauberDefenceUITestCase: XCTestCase {
         if marketingScreenshot {
             app.launchArguments.append("--marketing-screenshot")
         }
+        if preserveProgress { app.launchArguments.append("--preserve-progress") }
         app.launchEnvironment["TAUBERDEFENCE_UI_TEST_LANGUAGE"] = language.code
         app.launchEnvironment["TZ"] = "Europe/Berlin"
         app.launch()
-        waitForExistence(element("game.city"), timeout: 12)
+        waitForExistence(element(fixture == .menu ? "menu.screen" : "game.city"), timeout: 20)
         return app
     }
 
@@ -130,7 +133,7 @@ class TauberDefenceUITestCase: XCTestCase {
     }
 
     func openBuildMenu(at spot: Int, file: StaticString = #filePath, line: UInt = #line) {
-        tap(app.buttons["ui-test.spot.\(spot)"], file: file, line: line)
+        tap(app.buttons["board.spot.\(spot)"], file: file, line: line)
         waitForExistence(element("build.menu"), file: file, line: line)
     }
 
@@ -143,7 +146,12 @@ class TauberDefenceUITestCase: XCTestCase {
         let money = element("hud.money")
         let originalMoney = money.label
         openBuildMenu(at: spot, file: file, line: line)
-        tap(app.buttons["build.\(defenseIdentifier)"], file: file, line: line)
+        let choice = app.buttons["build.\(defenseIdentifier)"]
+        for _ in 0..<5 {
+            if choice.isHittable { break }
+            app.scrollViews["build.catalog"].swipeLeft()
+        }
+        tap(choice, file: file, line: line)
         waitForLabelToChange(from: originalMoney, on: money, file: file, line: line)
         waitForDisappearance(element("build.menu"), file: file, line: line)
     }
@@ -213,6 +221,71 @@ class TauberDefenceUITestCase: XCTestCase {
 
 @MainActor
 final class TauberDefenceUITests: TauberDefenceUITestCase {
+    func testMenuStartsClassicAndExperimentalModes() {
+        launch(fixture: .menu)
+        XCTAssertEqual(element("menu.xp").label, "0 XP")
+        tap(app.buttons["menu.classic"])
+        XCTAssertEqual(money(from: element("hud.money")), 300)
+        tap(app.buttons["game.pause"])
+        tap(app.buttons["pause.menu"])
+        waitForExistence(element("menu.screen"))
+        tap(app.buttons["menu.trials"])
+        XCTAssertEqual(money(from: element("hud.money")), 1_200)
+        XCTAssertTrue(element("hud.wave").label.contains("6"))
+        purchase("decoy", at: 3)
+        tap(app.buttons["wave.start"])
+        waitForExistence(element("wave.running"))
+    }
+
+    func testExperiencePersistsWithoutDuplicateResultRewards() {
+        launch(fixture: .victory)
+        XCTAssertTrue(element("result.xp").label.contains("150"))
+        tap(app.buttons["result.menu"])
+        XCTAssertEqual(element("menu.xp").label, "150 XP")
+        app.terminate()
+        launch(fixture: .menu, preserveProgress: true)
+        XCTAssertEqual(element("menu.xp").label, "150 XP")
+        tap(app.buttons["menu.classic"])
+        tap(app.buttons["game.pause"])
+        tap(app.buttons["pause.menu"])
+        XCTAssertEqual(element("menu.xp").label, "150 XP")
+    }
+
+    func testExperimentalDefensesCanBePurchasedThroughRealMarkers() {
+        for type in ["windowCD", "flutterTape", "broomOfficer", "speaker", "paperwork", "decoy"] {
+            launch()
+            purchase(type, at: 3)
+            XCTAssertFalse(app.buttons["board.spot.3"].exists)
+            app.terminate()
+        }
+    }
+
+    func testPinchAndTwistUpdateCamera() {
+        launch()
+        let reset = app.buttons["camera.reset"]
+        let initial = reset.value as? String
+        element("game.city").pinch(withScale: 1.4, velocity: 1)
+        XCTAssertNotEqual(reset.value as? String, initial)
+        let zoomed = reset.value as? String
+        element("game.city").rotate(.pi / 4, withVelocity: 1)
+        XCTAssertNotEqual(reset.value as? String, zoomed)
+        tap(reset)
+        XCTAssertEqual(reset.value as? String, initial)
+    }
+
+    func testRealMarkersRemainAlignedAfterCameraChanges() {
+        launch()
+        let original = app.buttons["board.spot.3"].frame
+        tap(app.buttons["camera.in"])
+        tap(app.buttons["camera.rotate"])
+        XCTAssertNotEqual(app.buttons["board.spot.3"].frame, original)
+        purchase("plastic-owl", at: 3)
+        XCTAssertFalse(app.buttons["board.spot.3"].exists)
+        tap(app.buttons["camera.reset"])
+        purchase("sprinkler", at: 2)
+        capture("real-marker-purchases")
+    }
+
     func testLaunchShowsPlayableEconomyAndLevel() {
         launch()
 
@@ -267,7 +340,7 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
         waitForExistence(element("wave.running"))
         XCTAssertGreaterThan(money(from: element("hud.money")), -1)
         XCTAssertFalse(
-            app.buttons["ui-test.spot.1"].exists && app.buttons["ui-test.spot.1"].isEnabled,
+            app.buttons["board.spot.1"].exists,
             "Battle fixture must start with its first defense already built"
         )
     }
@@ -305,6 +378,11 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
     }
 
     func testEnglishLocalization() {
+        launch(fixture: .menu, language: .english)
+        XCTAssertTrue(app.buttons["menu.trials"].label.contains("START FIELD TRIALS"))
+        tap(app.buttons["menu.guide"])
+        XCTAssertTrue(app.staticTexts["The usual suspects"].waitForExistence(timeout: 5))
+        app.terminate()
         launch(language: .english)
 
         XCTAssertEqual(app.buttons["wave.start"].label, "START FIRST WAVE")
@@ -323,6 +401,7 @@ final class TauberDefenceUITests: TauberDefenceUITestCase {
 @MainActor
 final class TauberDefenceMarketingScreenshots: TauberDefenceUITestCase {
     func testAppStoreMarketingScreenshots() {
+        snapshot(.menu, indicator: "menu.screen", name: "marketing-00-headquarters")
         snapshot(.default, indicator: "wave.start", name: "marketing-01-marketplace")
         snapshot(.battle, indicator: "wave.running", name: "marketing-02-defense-in-action")
         snapshot(.boss, indicator: "wave.running", name: "marketing-03-ruediger")

@@ -1,6 +1,8 @@
 # Gameplay ideas for review
 
-Proposals only: none are approved or implemented. Ship and test `0.0.1` first. Keep every
+The user approved all six pigeon and six countermeasure prototypes after testing `0.0.1 (1)`.
+The experimental implementation is described in [experimental-beta.md](experimental-beta.md).
+The original brainstorming below remains design context, not a promise of final balance. Keep every
 interaction nonviolent: pressure makes pigeons leave, and the city pays for restored dignity.
 German names below are proposed product copy; documentation and implementation stay in English.
 

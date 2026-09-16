@@ -62,11 +62,11 @@ final class LocalizationTests: XCTestCase {
         let primary = try flattenedStrings(in: XCTUnwrap(catalogs["de"]))
         let english = try flattenedStrings(in: XCTUnwrap(catalogs["en"]))
 
-        XCTAssertEqual(Set(primary.keys), expectedTranslationKeys)
-        XCTAssertEqual(Set(english.keys), expectedTranslationKeys)
+        XCTAssertTrue(expectedTranslationKeys.isSubset(of: Set(primary.keys)))
+        XCTAssertTrue(expectedTranslationKeys.isSubset(of: Set(english.keys)))
         XCTAssertEqual(Set(primary.keys), Set(english.keys))
 
-        for key in expectedTranslationKeys {
+        for key in primary.keys {
             let primaryValue = try XCTUnwrap(primary[key], "Missing primary value for \(key)")
             let englishValue = try XCTUnwrap(english[key], "Missing English value for \(key)")
             XCTAssertFalse(

@@ -20,7 +20,7 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 - [x] Make the complete iPad XCUITest run green and retain its passing artifacts.
 - [x] Public compliance website is deployed through GitHub Pages; custom domain, DNS, HTTPS, `/`, `/support/`, and `/privacy/` return successfully.
 - [x] Approved contact-address commit is live; `/capabilities/` and deployed support/privacy addresses are verified.
-- [ ] Provision Apple signing and App Store Connect, then upload first playable `0.0.1` build.
+- [x] Upload first playable `0.0.1 (1)` locally; Apple accepted it and the user tested it on a physical phone.
 - [ ] Pass physical-device beta acceptance on one supported iPhone and one supported iPad.
 
 ## Phase 1 — Project foundation
@@ -167,7 +167,7 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 - [x] Build once, run tests serially, retry named failures, and retain logs/xcresult.
 - [x] Pass the complete iPhone XCUITest suite from a clean simulator and retain its evidence.
 - [x] Pass the complete iPad suite from a clean simulator.
-- [ ] Pass the same two-device matrix in GitHub Actions on current `main`.
+- [x] Pass both device jobs on release commit `2e3d5ba` (CI run `35103780130`).
 
 ### Marketing screenshots
 
@@ -211,7 +211,7 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 - [x] Publish website changes from `main` through GitHub Pages Actions.
 - [x] Gate automatic TestFlight delivery on successful current-`main` CI.
 - [x] Refuse stale commits before archive and again before upload.
-- [ ] Make every current `main` CI job green.
+- [x] Make every CI job green for the first uploaded release (`2e3d5ba`).
 - [x] Confirm Pages workflow has successfully deployed the production repository.
 - [ ] Confirm repository branch/environment protections match desired release policy.
 
@@ -249,11 +249,11 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 
 ### First upload
 
-- [ ] Freeze a clean, green `main` commit as first-playable candidate `0.0.1`.
+- [x] Freeze clean, green, pushed `2e3d5ba` as first playable `0.0.1 (1)`.
 - [x] Run complete local gate: core coverage plus iPhone and iPad E2E.
-- [ ] Archive and upload manually, or dispatch the guarded TestFlight workflow.
-- [ ] Retain signed archive, IPA/export evidence, and upload logs.
-- [ ] Wait for App Store Connect processing and resolve validation warnings.
+- [x] Archive and upload locally with Xcode 27; Apple reported successful upload.
+- [x] Retain signed archive and upload log in `e2e-artifacts/release-0.0.1-1/`.
+- [x] First build appeared in TestFlight, confirmed by the user. Future uploads stop at Apple’s successful-upload response.
 - [ ] Complete build-level export-compliance questions.
 - [ ] Add processed build to an internal TestFlight group.
 - [ ] Install from TestFlight on physical iPhone and iPad.
@@ -298,6 +298,16 @@ Start only after `0.0.1` reaches a physical phone and its blocking bugs are reco
 - [ ] Add more maps only after the marketplace is fun and stable.
 - [ ] Evaluate save games, achievements, Game Center, cloud save, and monetization separately.
 - [ ] Keep accounts, analytics, ads, IAP, online features, multiplayer, map editor, procedural maps, and large tower catalog out until explicitly scoped.
+
+## Current physical-feedback iteration
+
+- [ ] Replace debug-only placement test shortcuts with real yellow-marker input tests.
+- [ ] Fix marker taps and implement bounded zoom plus free camera rotation.
+- [ ] Add all six proposed pigeon variants and six countermeasures as experimental content.
+- [ ] Keep classic mode; add field trials with every new enemy type.
+- [ ] Add a main menu, local XP, rank, wins, best wave, and a roster guide.
+- [ ] Verify persistence, both languages, gameplay, and screenshots on both simulator families.
+- [ ] Commit and push checkpoints; upload the next build from clean, green main.
 
 ## Recommended next sequence
 

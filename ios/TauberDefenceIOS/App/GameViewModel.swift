@@ -9,6 +9,15 @@ final class GameViewModel {
     private let feedback: GameFeedback
     private let localization: AppLocalization
     let launchOptions: AutomationLaunchOptions
+    private let progressStore: ProgressStore
+    private(set) var progress: PlayerProgress
+    var isShowingMenu: Bool
+    var isShowingGuide = false
+    private var runID = UUID()
+    private var fledCount = 0
+    private var completedWaves = 0
+    private var runRecorded = false
+    private(set) var earnedExperience = 0
 
     private(set) var session: GameSession
     var selectedBuildSpotID: Int?
@@ -23,6 +32,10 @@ final class GameViewModel {
     ) {
         self.localization = localization
         self.launchOptions = launchOptions
+        let store = ProgressStore(options: launchOptions)
+        progressStore = store
+        progress = store.load()
+        isShowingMenu = !launchOptions.isAutomatedLaunch || launchOptions.fixture == .menu
         let simulation = AutomationFixtureFactory.makeSimulation(for: launchOptions)
         self.simulation = simulation
         feedback = GameFeedback(enabled: !launchOptions.isAutomatedLaunch)
@@ -31,6 +44,42 @@ final class GameViewModel {
         if launchOptions.fixture == .boss {
             selectedPigeonID = simulation.session.pigeons.first?.id
         }
+        if session.isGameOver { recordRun() }
+    }
+
+    func startGame(experimental: Bool) {
+        simulation = GameSimulation(level: experimental ? .fieldTrials : .marketplace,
+            configuration: SimulationConfiguration(startingMoney: experimental ? 1_200 : 300))
+        beginRun()
+        isShowingMenu = false
+        commitSnapshot()
+    }
+
+    func returnToMenu() {
+        if session.currentWaveNumber != nil { recordRun() }
+        simulation.setPaused(true)
+        dismissSelection()
+        toast = nil
+        isShowingMenu = true
+        commitSnapshot()
+    }
+
+    private func beginRun() {
+        runID = UUID()
+        fledCount = 0
+        completedWaves = 0
+        runRecorded = false
+        earnedExperience = 0
+        dismissSelection()
+        toast = nil
+    }
+
+    private func recordRun() {
+        guard !runRecorded else { return }
+        runRecorded = true
+        earnedExperience = progress.record(runID: runID, fled: fledCount,
+            completedWaves: completedWaves, victory: session.phase == .victory)
+        progressStore.save(progress)
     }
 
     var selectedPigeon: Pigeon? {
@@ -140,7 +189,9 @@ final class GameViewModel {
     }
 
     func reset() {
+        if session.currentWaveNumber != nil { recordRun() }
         simulation.reset()
+        beginRun()
         selectedBuildSpotID = nil
         selectedPigeonID = nil
         toast = nil
@@ -149,6 +200,7 @@ final class GameViewModel {
     }
 
     private func advance(by deltaTime: Double) {
+        guard !isShowingMenu, !isShowingHelp, !isShowingGuide else { return }
         simulation.update(deltaTime: deltaTime)
         commitSnapshot()
     }
@@ -158,6 +210,14 @@ final class GameViewModel {
         let updated = simulation.session
         let events = simulation.consumeEvents()
         session = updated
+        for event in events {
+            switch event {
+            case .pigeonFled: fledCount += 1
+            case let .waveCompleted(number): completedWaves = max(completedWaves, number)
+            default: break
+            }
+        }
+        if updated.isGameOver { recordRun() }
 
         if let selectedPigeonID,
            !updated.pigeons.contains(where: { $0.id == selectedPigeonID }) {

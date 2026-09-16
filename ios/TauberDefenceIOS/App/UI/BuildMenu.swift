@@ -10,7 +10,30 @@ struct BuildMenu: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            purchaseControls
+            HStack {
+                Text(localization.t("build.title"))
+                    .font(.system(.headline, design: .rounded, weight: .black))
+                    .accessibilityIdentifier("build.menu")
+                Spacer()
+                Text(localization.t("build.browse")).font(.caption).foregroundStyle(.secondary)
+                Button(action: onClose) {
+                    Image(systemName: "xmark").frame(width: 44, height: 44)
+                }
+                .accessibilityLabel(localization.t("build.close"))
+                .accessibilityIdentifier("build.close")
+            }
+            ScrollView(.horizontal) {
+                HStack(spacing: 10) {
+                    ForEach(DefenseType.allCases, id: \.self) { type in
+                        DefensePurchaseButton(type: type, affordable: session.money >= type.cost,
+                                              action: { onPurchase(type) })
+                            .frame(width: 225)
+                    }
+                }
+            }
+            .accessibilityIdentifier("build.catalog")
+            .frame(height: 76)
+
 
             if let purchaseError {
                 Label(purchaseError, systemImage: "eurosign.circle.fill")
@@ -26,37 +49,6 @@ struct BuildMenu: View {
         .frame(maxWidth: 760)
     }
 
-    private var purchaseControls: some View {
-        HStack(spacing: 10) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(localization.t("build.agency"))
-                    .font(.system(size: 10, weight: .black, design: .rounded))
-                    .foregroundStyle(GameTheme.yellow)
-                    .tracking(1)
-                    .accessibilityIdentifier("build.menu")
-                Text(localization.t("build.title"))
-                    .font(.system(.headline, design: .rounded, weight: .bold))
-            }
-            .frame(minWidth: 138, alignment: .leading)
-
-            ForEach(DefenseType.allCases, id: \.self) { type in
-                DefensePurchaseButton(
-                    type: type,
-                    affordable: session.money >= type.cost,
-                    action: { onPurchase(type) }
-                )
-            }
-
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .black))
-                    .frame(width: 34, height: 34)
-                    .background(.white.opacity(0.1), in: Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(localization.t("build.close"))
-        }
-    }
 }
 
 private struct DefensePurchaseButton: View {
@@ -77,7 +69,7 @@ private struct DefensePurchaseButton: View {
                 VStack(alignment: .leading, spacing: 1) {
                     Text(type.localizedName(using: localization))
                         .font(.system(size: 13, weight: .black, design: .rounded))
-                        .lineLimit(1)
+                        .lineLimit(2)
                     Text(
                         localization.t(
                             "build.price_tagline",
@@ -89,7 +81,7 @@ private struct DefensePurchaseButton: View {
                     )
                         .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .foregroundStyle(affordable ? .white.opacity(0.65) : GameTheme.coral)
-                        .lineLimit(1)
+                        .lineLimit(2)
                 }
             }
             .padding(.horizontal, 10)
@@ -116,15 +108,16 @@ private extension DefenseType {
         switch self {
         case .plasticOwl: GameTheme.yellow
         case .sprinkler: GameTheme.blue
-        case .falconer: GameTheme.coral
+        case .falconer, .broomOfficer: GameTheme.coral
+        case .windowCD, .flutterTape: GameTheme.yellow
+        case .speaker, .paperwork, .decoy: GameTheme.teal
         }
     }
 
     var accessibilityName: String {
         switch self {
         case .plasticOwl: "plastic-owl"
-        case .sprinkler: "sprinkler"
-        case .falconer: "falconer"
+        default: rawValue
         }
     }
 }

@@ -19,6 +19,7 @@ struct PauseOverlay: View {
     @EnvironmentObject private var localization: AppLocalization
     let onResume: () -> Void
     let onRestart: () -> Void
+    let onMenu: () -> Void
 
     var body: some View {
         VStack(spacing: 14) {
@@ -30,6 +31,9 @@ struct PauseOverlay: View {
                 .accessibilityIdentifier("pause.overlay")
 
             HStack(spacing: 10) {
+                Button(localization.t("menu.back"), action: onMenu)
+                    .buttonStyle(SecondaryGameButtonStyle())
+                    .accessibilityIdentifier("pause.menu")
                 Button(localization.t("pause.restart"), action: onRestart)
                     .buttonStyle(SecondaryGameButtonStyle())
                 Button(localization.t("pause.continue"), action: onResume)
@@ -49,6 +53,8 @@ struct ResultOverlay: View {
     let symbol: String
     let tint: Color
     let onRestart: () -> Void
+    let onMenu: () -> Void
+    let experience: Int
 
     var body: some View {
         VStack(spacing: 12) {
@@ -63,6 +69,12 @@ struct ResultOverlay: View {
                 .font(.system(.body, design: .rounded, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.68))
                 .multilineTextAlignment(.center)
+            Text(localization.t("result.xp", ["xp": experience]))
+                .foregroundStyle(GameTheme.yellow)
+                .accessibilityIdentifier("result.xp")
+            Button(localization.t("menu.back"), action: onMenu)
+                .buttonStyle(SecondaryGameButtonStyle())
+                .accessibilityIdentifier("result.menu")
             Button(localization.t("result.restart"), action: onRestart)
                 .buttonStyle(PrimaryGameButtonStyle())
                 .padding(.top, 4)

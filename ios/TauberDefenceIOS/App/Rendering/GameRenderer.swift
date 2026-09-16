@@ -82,6 +82,16 @@ final class GameRenderer {
         }
     }
 
+    func updateCamera(_ pose: BoardCamera) {
+        var camera = OrthographicCameraComponent()
+        camera.near = 0.1
+        camera.far = 100
+        camera.scale = Float(pose.verticalSpan)
+        camera.scaleDirection = .vertical
+        cameraEntity.components.set(camera)
+        cameraEntity.look(at: SIMD3<Float>(pose.target), from: SIMD3<Float>(pose.eye), relativeTo: nil)
+    }
+
     func install(
         session: GameSession,
         selectedBuildSpotID: Int?,
@@ -172,7 +182,8 @@ final class GameRenderer {
             }
 
             visual.root.position = spot.position.realityPosition
-            visual.root.isEnabled = !spot.isOccupied
+            // Native buttons are the visible markers and touch targets on iOS.
+            visual.root.isEnabled = false
             visual.selection.isEnabled = selectedID == spot.id
 
             let isSelected = selectedID == spot.id
@@ -262,8 +273,8 @@ final class GameRenderer {
 
     private func makePigeonVisual(_ pigeon: Pigeon) -> PigeonVisual {
         let isBoss = pigeon.type == .ruediger
-        let width: Float = isBoss ? 2.20 : 1.34
-        let height: Float = isBoss ? 1.97 : 1.12
+        let width: Float = isBoss ? 2.20 : (pigeon.type == .dieter ? 1.8 : pigeon.type == .sabine ? 0.95 : 1.34)
+        let height: Float = isBoss ? 1.97 : (pigeon.type == .dieter ? 1.4 : pigeon.type == .sabine ? 0.85 : 1.12)
 
         let root = Entity()
         root.name = "pigeon-visual:\(pigeon.id)"
@@ -302,7 +313,7 @@ final class GameRenderer {
         bird.addChild(spriteBillboard)
 
         let spriteMaterial: UnlitMaterial
-        if let texture = pigeonTextures[pigeon.type] {
+        if let texture = pigeonTextures[pigeon.type] ?? pigeonTextures[.normal] {
             var material = UnlitMaterial(texture: texture)
             material.faceCulling = .none
             material.opacityThreshold = 0.018
@@ -324,6 +335,15 @@ final class GameRenderer {
         sprite.name = "pigeon-sprite:\(pigeon.id)"
         sprite.position = SIMD3(0, (height * 0.5) + 0.11, 0)
         spriteBillboard.addChild(sprite)
+        addPigeonAccessory(type: pigeon.type, height: height, to: spriteBillboard)
+
+        if [.ingo, .gurrmann, .coalition].contains(pigeon.type) {
+            let aura = makeCylinder(height: 0.018, radius: pigeon.type == .coalition ? 0.8 : 1.1,
+                color: (pigeon.type == .gurrmann ? RenderingPalette.coral : RenderingPalette.teal).withAlphaComponent(0.2),
+                position: SIMD3(0, 0.035, 0))
+            aura.name = "confidence-aura"
+            root.addChild(aura)
+        }
 
         let barRoot = Entity()
         barRoot.name = "pigeon-tolerance:\(pigeon.id)"
@@ -374,6 +394,10 @@ final class GameRenderer {
             z -= fleeTime * 0.7
         }
         visual.root.position = SIMD3(x, 0, z)
+        if let aura = visual.root.findEntity(named: "confidence-aura") {
+            aura.isEnabled = pigeon.isTargetable && simulationTime >= pigeon.disruptedUntil &&
+                (pigeon.type != .gurrmann || simulationTime.truncatingRemainder(dividingBy: 6) < 2.2)
+        }
 
         let energy: (frequency: Float, amplitude: Float)
         switch pigeon.state {
@@ -492,6 +516,8 @@ final class GameRenderer {
             makeSprinkler(on: aimRoot, activity: activity)
         case .falconer:
             makeFalconer(on: aimRoot, activity: activity)
+        default:
+            makeExperimentalDefense(defense.type, on: aimRoot, activity: activity)
         }
 
         let beamColor: UIColor
@@ -499,6 +525,7 @@ final class GameRenderer {
         case .plasticOwl: beamColor = RenderingPalette.yellow.withAlphaComponent(0.88)
         case .sprinkler: beamColor = RenderingPalette.water
         case .falconer: beamColor = RenderingPalette.coral.withAlphaComponent(0.9)
+        default: beamColor = RenderingPalette.teal
         }
         let attackEffect = ModelEntity(
             mesh: .generateBox(size: SIMD3(0.055, 0.055, 1), cornerRadius: 0.025),
@@ -620,6 +647,7 @@ final class GameRenderer {
         case .plasticOwl: startHeight = 1.35
         case .sprinkler: startHeight = 0.80
         case .falconer: startHeight = 1.20
+        default: startHeight = 1
         }
         let start = SIMD3(Float(defense.position.x), startHeight, Float(defense.position.z))
         let end = SIMD3(
@@ -644,7 +672,77 @@ final class GameRenderer {
         case .plasticOwl: 0.13
         case .sprinkler: 0.18
         case .falconer: 0.22
+        default: 0.2
         }
+    }
+
+    private func addPigeonAccessory(type: PigeonType, height: Float, to root: Entity) {
+        switch type {
+        case .normal, .ruediger: break
+        case .dieter:
+            root.addChild(makeBox(size: SIMD3(0.75, 0.14, 0.1), color: RenderingPalette.yellow,
+                position: SIMD3(0, height * 0.4, 0.04)))
+        case .sabine:
+            root.addChild(makeBox(size: SIMD3(0.3, 0.38, 0.15), color: RenderingPalette.coral,
+                position: SIMD3(-0.3, height * 0.55, 0.04), cornerRadius: 0.06))
+        case .volker:
+            root.addChild(makeBox(size: SIMD3(0.65, 0.17, 0.15), color: RenderingPalette.window,
+                position: SIMD3(0.1, height, 0.04)))
+        case .ingo:
+            root.addChild(makeBox(size: SIMD3(0.25, 0.42, 0.09), color: RenderingPalette.teal,
+                position: SIMD3(0.55, height * 0.6, 0.04), cornerRadius: 0.035))
+        case .gurrmann:
+            root.addChild(makeBox(size: SIMD3(0.47, 0.56, 0.09), color: .white,
+                position: SIMD3(0.45, height * 0.5, 0.04)))
+            root.addChild(makeBox(size: SIMD3(0.3, 0.09, 0.12), color: RenderingPalette.coral,
+                position: SIMD3(0.45, height * 0.55, 0.1)))
+        case .coalition:
+            for x: Float in [-0.23, 0, 0.23] {
+                root.addChild(makeSphere(radius: 0.1, color: RenderingPalette.teal,
+                    position: SIMD3(x, height + 0.07, 0.04)))
+            }
+        }
+    }
+
+    private func makeExperimentalDefense(_ type: DefenseType, on root: Entity, activity: Entity) {
+        switch type {
+        case .windowCD:
+            root.addChild(makeBox(size: SIMD3(0.08, 1.4, 0.08), color: RenderingPalette.wood, position: SIMD3(0, 0.8, 0)))
+            let disc = makeCylinder(height: 0.045, radius: 0.38, color: RenderingPalette.metal,
+                position: SIMD3(0, 1.15, 0.05), metallic: true)
+            disc.orientation = simd_quatf(angle: .pi / 2, axis: SIMD3(1, 0, 0))
+            root.addChild(disc)
+        case .flutterTape:
+            for x: Float in [-0.42, 0.42] {
+                root.addChild(makeBox(size: SIMD3(0.07, 1.1, 0.07), color: RenderingPalette.wood, position: SIMD3(x, 0.7, 0)))
+            }
+            root.addChild(makeBox(size: SIMD3(1.0, 0.25, 0.07), color: RenderingPalette.yellow, position: SIMD3(0, 1.1, 0)))
+        case .broomOfficer:
+            root.addChild(makeCylinder(height: 0.85, radius: 0.24, color: RenderingPalette.coral, position: SIMD3(0, 0.6, 0)))
+            root.addChild(makeSphere(radius: 0.22, color: RenderingPalette.cream, position: SIMD3(0, 1.23, 0)))
+            root.addChild(makeBox(size: SIMD3(0.08, 1.3, 0.08), color: RenderingPalette.wood, position: SIMD3(0.4, 0.8, 0)))
+            root.addChild(makeBox(size: SIMD3(0.55, 0.2, 0.25), color: RenderingPalette.yellow, position: SIMD3(0.4, 0.23, 0)))
+        case .speaker:
+            root.addChild(makeBox(size: SIMD3(0.65, 0.9, 0.4), color: RenderingPalette.metal, position: SIMD3(0, 0.7, 0), cornerRadius: 0.09))
+            for y: Float in [0.5, 0.9] {
+                root.addChild(makeSphere(radius: 0.18, color: .black, position: SIMD3(0, y, 0.2)))
+            }
+        case .paperwork:
+            root.addChild(makeBox(size: SIMD3(0.7, 0.6, 0.6), color: RenderingPalette.wood, position: SIMD3(0, 0.5, 0)))
+            for index in 0..<5 {
+                root.addChild(makeBox(size: SIMD3(0.58, 0.045, 0.45), color: .white,
+                    position: SIMD3(Float(index % 2) * 0.07, 0.85 + Float(index) * 0.055, 0)))
+            }
+        case .decoy:
+            root.addChild(makeCylinder(height: 0.1, radius: 0.5, color: RenderingPalette.teal, position: SIMD3(0, 0.23, 0)))
+            for index in 0..<7 {
+                let angle = Float(index) * 0.9
+                root.addChild(makeSphere(radius: 0.09, color: RenderingPalette.yellow,
+                    position: SIMD3(cos(angle) * 0.3, 0.36, sin(angle) * 0.3)))
+            }
+        default: break
+        }
+        activity.addChild(makeSphere(radius: 0.2, color: RenderingPalette.teal.withAlphaComponent(0.5), position: SIMD3(0, 1.3, 0)))
     }
 }
 

@@ -5,6 +5,7 @@ import TauberDefenceCore
 struct AutomationLaunchOptions: Equatable {
     enum Fixture: String {
         case `default`
+        case menu
         case lowBudget = "low-budget"
         case battle
         case boss
@@ -63,7 +64,7 @@ enum AutomationFixtureFactory {
         }
 
         switch options.fixture {
-        case .default:
+        case .default, .menu:
             return GameSimulation(
                 level: .marketplace,
                 configuration: automationConfiguration()

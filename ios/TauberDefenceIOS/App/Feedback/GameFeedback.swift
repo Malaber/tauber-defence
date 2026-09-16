@@ -31,6 +31,9 @@ final class GameFeedback {
                 case .plasticOwl: play(.owl)
                 case .sprinkler: play(.sprinkler)
                 case .falconer: play(.falcon)
+                case .windowCD, .flutterTape: play(.owl)
+                case .broomOfficer, .paperwork: play(.coin)
+                case .speaker, .decoy: play(.sprinkler)
                 }
 
             case .pigeonFled:

@@ -312,35 +312,34 @@ private extension GameSimulation {
             guard session.defenses[defenseIndex].cooldownRemaining <= 1e-12 else { continue }
 
             switch session.defenses[defenseIndex].type {
-            case .plasticOwl:
-                firePlasticOwl(at: defenseIndex)
-            case .sprinkler:
-                fireSprinkler(at: defenseIndex)
             case .falconer:
                 fireFalconer(at: defenseIndex)
+            default:
+                fireImmediateDefense(at: defenseIndex)
             }
         }
     }
 
-    mutating func firePlasticOwl(at defenseIndex: Int) {
+    mutating func fireImmediateDefense(at defenseIndex: Int) {
         let defense = session.defenses[defenseIndex]
-        guard let targetID = nearestTargetID(for: defense) else { return }
-        recordDefenseFire(at: defenseIndex, targetIDs: [targetID])
-        applyPressure(
-            defense.type.pressure,
-            toPigeonID: targetID,
-            fromDefenseID: defense.id
-        )
-    }
-
-    mutating func fireSprinkler(at defenseIndex: Int) {
-        let defense = session.defenses[defenseIndex]
-        let targetIDs = targets(inRangeOf: defense).map(\.id)
+        let targetIDs: [Int]
+        if defense.type.targetingMode == .area {
+            targetIDs = targets(inRangeOf: defense).map(\.id)
+        } else {
+            targetIDs = nearestTargetID(for: defense).map { [$0] } ?? []
+        }
         guard !targetIDs.isEmpty else { return }
         recordDefenseFire(at: defenseIndex, targetIDs: targetIDs)
 
         for targetID in targetIDs {
-            applySlow(toPigeonID: targetID)
+            if defense.type.slowFraction > 0 {
+                applySlow(toPigeonID: targetID, fraction: defense.type.slowFraction)
+            }
+            if defense.type.disruptionDuration > 0,
+               let index = session.pigeons.firstIndex(where: { $0.id == targetID }) {
+                session.pigeons[index].disruptedUntil = max(session.pigeons[index].disruptedUntil,
+                    session.simulationTime + defense.type.disruptionDuration)
+            }
             applyPressure(
                 defense.type.pressure,
                 toPigeonID: targetID,
@@ -400,12 +399,15 @@ private extension GameSimulation {
         }?.id
     }
 
-    mutating func applySlow(toPigeonID pigeonID: Int) {
+    mutating func applySlow(toPigeonID pigeonID: Int, fraction: Double) {
         guard let index = session.pigeons.firstIndex(where: { $0.id == pigeonID }),
               session.pigeons[index].isTargetable else {
             return
         }
         let duration = session.configuration.sprinklerSlowDuration
+        guard session.simulationTime >= session.pigeons[index].slowedUntil ||
+            fraction >= session.pigeons[index].appliedSlowFraction else { return }
+        session.pigeons[index].appliedSlowFraction = fraction
         session.pigeons[index].slowedUntil = max(
             session.pigeons[index].slowedUntil,
             session.simulationTime + duration
@@ -413,7 +415,7 @@ private extension GameSimulation {
         events.append(
             .slowApplied(
                 pigeonID: pigeonID,
-                fraction: DefenseType.sprinkler.slowFraction,
+                fraction: fraction,
                 duration: duration
             )
         )
@@ -430,11 +432,16 @@ private extension GameSimulation {
         }
 
         var pigeon = session.pigeons[index]
-        pigeon.currentTolerance = max(0, pigeon.currentTolerance - amount)
+        guard amount > 0 else { return }
+        let category = session.defenses.first { $0.id == defenseID }?.type.category ?? .visual
+        let effectivePressure = amount * pigeon.pressureMultiplier(
+            category: category, nearby: session.pigeons, at: session.simulationTime)
+        pigeon.lastPressureCategory = category
+        pigeon.currentTolerance = max(0, pigeon.currentTolerance - effectivePressure)
         events.append(
             .pressureApplied(
                 pigeonID: pigeon.id,
-                amount: amount,
+                amount: effectivePressure,
                 remainingTolerance: pigeon.currentTolerance,
                 defenseID: defenseID
             )

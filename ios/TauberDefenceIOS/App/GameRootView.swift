@@ -11,6 +11,18 @@ struct GameRootView: View {
     }
 
     var body: some View {
+        Group {
+            if model.isShowingMenu {
+                MainMenu(progress: model.progress, onPlay: model.startGame,
+                         onGuide: { model.isShowingGuide = true })
+            } else {
+                battlefield
+            }
+        }
+        .sheet(isPresented: $model.isShowingGuide) { FieldGuide() }
+    }
+
+    private var battlefield: some View {
         ZStack {
             GameRealityView(
                 session: model.session,
@@ -20,7 +32,6 @@ struct GameRootView: View {
                 onPigeonTapped: model.selectPigeon
             )
             .ignoresSafeArea()
-            .accessibilityIdentifier("game.city")
 
             Color.black.opacity(model.session.isPaused ? 0.28 : 0)
                 .ignoresSafeArea()
@@ -67,7 +78,7 @@ struct GameRootView: View {
             }
 
             if model.session.isPaused {
-                PauseOverlay(onResume: model.togglePause, onRestart: model.reset)
+                PauseOverlay(onResume: model.togglePause, onRestart: model.reset, onMenu: model.returnToMenu)
             }
 
             switch model.session.phase {
@@ -77,7 +88,9 @@ struct GameRootView: View {
                     message: localization.t("result.victory_message"),
                     symbol: "trophy.fill",
                     tint: GameTheme.yellow,
-                    onRestart: model.reset
+                    onRestart: model.reset,
+                    onMenu: model.returnToMenu,
+                    experience: model.earnedExperience
                 )
             case .defeat:
                 ResultOverlay(
@@ -85,21 +98,14 @@ struct GameRootView: View {
                     message: localization.t("result.defeat_message"),
                     symbol: "cup.and.saucer.fill",
                     tint: GameTheme.coral,
-                    onRestart: model.reset
+                    onRestart: model.reset,
+                    onMenu: model.returnToMenu,
+                    experience: model.earnedExperience
                 )
             case .preparing, .waveRunning, .waveComplete:
                 EmptyView()
             }
 
-            #if DEBUG
-            if model.launchOptions.isUITesting && !model.launchOptions.isMarketingScreenshot {
-                UITestControlStrip(
-                    session: model.session,
-                    onSelectSpot: model.selectBuildSpot,
-                    onSelectPigeon: model.selectFirstPigeon
-                )
-            }
-            #endif
         }
         .animation(.spring(response: 0.35, dampingFraction: 0.78), value: model.selectedBuildSpotID)
         .animation(.spring(response: 0.35, dampingFraction: 0.78), value: model.selectedPigeonID)
@@ -117,38 +123,3 @@ struct GameRootView: View {
         }
     }
 }
-
-#if DEBUG
-private struct UITestControlStrip: View {
-    @EnvironmentObject private var localization: AppLocalization
-    let session: GameSession
-    let onSelectSpot: (Int) -> Void
-    let onSelectPigeon: () -> Void
-
-    var body: some View {
-        VStack(alignment: .trailing, spacing: 5) {
-            HStack(spacing: 4) {
-                ForEach(session.buildSpots) { spot in
-                    Button("\(spot.id)") { onSelectSpot(spot.id) }
-                        .disabled(spot.isOccupied)
-                        .accessibilityLabel(localization.t("debug.spot", ["id": spot.id]))
-                        .accessibilityIdentifier("ui-test.spot.\(spot.id)")
-                }
-            }
-
-            Button(localization.t("debug.select_pigeon"), action: onSelectPigeon)
-                .disabled(session.pigeons.isEmpty)
-                .accessibilityIdentifier("ui-test.pigeon")
-        }
-        .font(.system(size: 10, weight: .bold, design: .monospaced))
-        .buttonStyle(.bordered)
-        .controlSize(.mini)
-        .padding(6)
-        .background(.black.opacity(0.62), in: RoundedRectangle(cornerRadius: 10))
-        .padding(.trailing, 18)
-        .padding(.bottom, 72)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-        .accessibilityElement(children: .contain)
-    }
-}
-#endif
