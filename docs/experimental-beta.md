@@ -10,6 +10,8 @@ orthographic camera state as RealityKit. They are the visible yellow markers, no
 automation shortcuts. Occupied markers disappear. The debug-only placement strip was removed.
 Camera controls support pinch zoom (0.7–2.4×), two-finger rotation, one-finger orbit, and buttons
 for zoom, rotation, and returning to the original view. Tests purchase through these real markers.
+The camera is not assigned as its own orbit target. A screenshot pixel check rejects a missing
+RealityKit town even if native HUD controls and placement markers are still visible.
 
 ## Modes and progress
 

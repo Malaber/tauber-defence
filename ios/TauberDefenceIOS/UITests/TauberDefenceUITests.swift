@@ -209,6 +209,36 @@ class TauberDefenceUITestCase: XCTestCase {
         }
     }
 
+    func assertTownIsRendered() {
+        // Native HUD/markers can remain visible even when RealityKit draws nothing.
+        // The town's green ground and trees distinguish it from the blue backdrop.
+        let rendered = NSPredicate { _, _ in
+            guard let image = XCUIScreen.main.screenshot().image.cgImage else { return false }
+            let side = 64
+            var pixels = [UInt8](repeating: 0, count: side * side * 4)
+            return pixels.withUnsafeMutableBytes { bytes in
+                guard let context = CGContext(
+                    data: bytes.baseAddress, width: side, height: side,
+                    bitsPerComponent: 8, bytesPerRow: side * 4,
+                    space: CGColorSpaceCreateDeviceRGB(),
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+                ) else { return false }
+                context.draw(image, in: CGRect(x: 0, y: 0, width: side, height: side))
+                let channels = bytes.bindMemory(to: UInt8.self)
+                let greenPixels = stride(from: 0, to: channels.count, by: 4).filter { index in
+                    let red = Int(channels[index])
+                    let green = Int(channels[index + 1])
+                    let blue = Int(channels[index + 2])
+                    return green > red + 8 && green > blue + 8
+                }.count
+                return greenPixels > side * side / 50
+            }
+        }
+        let expectation = XCTNSPredicateExpectation(predicate: rendered, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: 15), .completed,
+                       "RealityKit town is missing; visible HUD alone is not a rendered game")
+    }
+
     @discardableResult
     private func wait(
         for predicate: NSPredicate,
@@ -419,6 +449,7 @@ final class TauberDefenceMarketingScreenshots: TauberDefenceUITestCase {
     private func snapshot(_ fixture: Fixture, indicator: String, name: String) {
         launch(fixture: fixture, marketingScreenshot: true)
         waitForExistence(element(indicator), timeout: 8)
+        if fixture == .default { assertTownIsRendered() }
         capture(name)
         app.terminate()
     }

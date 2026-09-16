@@ -49,13 +49,13 @@ struct GameRealityView: View {
 
             content.add(renderer.sceneRoot)
             content.add(renderer.cameraEntity)
+            // cameraTarget controls an orbit target; it does not select our camera.
+            // Pointing it at the camera itself can leave the entire town invisible.
             content.camera = .virtual
-            content.cameraTarget = renderer.cameraEntity
             renderer.updateCamera(camera)
             isReady = true
         } update: { content in
             content.camera = .virtual
-            content.cameraTarget = renderer.cameraEntity
             renderer.updateCamera(camera)
             renderer.reconcile(
                 session: session,

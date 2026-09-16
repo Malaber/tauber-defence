@@ -1,6 +1,7 @@
 # Tauber Defence implementation plan
 
-Living checklist for the first playable TestFlight build. Update it whenever evidence changes.
+Living checklist for the playable TestFlight builds. Update it whenever evidence changes.
+The original MVP phases below retain their 0.0.1 evidence; the current iteration tracks 0.0.2.
 
 ## How to use this plan
 
@@ -13,7 +14,7 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 
 - [x] Native SwiftUI + RealityKit vertical slice exists for iPhone and iPad.
 - [x] Deterministic game core, five waves, three defences, economy, victory, defeat, and Rüdiger exist.
-- [x] Core unit suite contains 26 tests and currently clears the 90% line-coverage gate.
+- [x] Core unit suite contains 36 tests with 96.17% local line coverage and clears the 90% gate.
 - [x] Generic iOS Simulator build has succeeded with signing disabled.
 - [x] Comprehensive XCUITest flows, deterministic fixtures, retry tooling, and marketing screenshot capture are implemented.
 - [x] Make the complete iPhone XCUITest run green and retain its passing artifacts.
@@ -301,24 +302,25 @@ Start only after `0.0.1` reaches a physical phone and its blocking bugs are reco
 
 ## Current physical-feedback iteration
 
-- [ ] Replace debug-only placement test shortcuts with real yellow-marker input tests.
-- [ ] Fix marker taps and implement bounded zoom plus free camera rotation.
-- [ ] Add all six proposed pigeon variants and six countermeasures as experimental content.
-- [ ] Keep classic mode; add field trials with every new enemy type.
-- [ ] Add a main menu, local XP, rank, wins, best wave, and a roster guide.
+- [x] Replace debug-only placement test shortcuts with real yellow-marker input tests.
+- [x] Implement native marker taps, bounded zoom, and free camera rotation; physical acceptance remains pending.
+- [x] Add all six proposed pigeon variants and six countermeasures as experimental content.
+- [x] Keep classic mode; add field trials with every new enemy type.
+- [x] Add a main menu, local XP, rank, wins, best wave, and a roster guide.
+- [x] Remove the self-targeting orbit camera that could hide the town; add a screenshot rendering guard.
 - [ ] Verify persistence, both languages, gameplay, and screenshots on both simulator families.
 - [ ] Commit and push checkpoints; upload the next build from clean, green main.
 
 ## Recommended next sequence
 
-1. Commit and push the localized release candidate; require green current-`main` CI.
-2. Re-check the published privacy copy and metadata against the signed release candidate.
-3. Archive and upload `0.0.1` from clean, committed current `main`.
-4. Install the processed TestFlight binary on a physical iPhone; record and fix blocking bugs.
-5. Run physical gameplay, accessibility, audio, and performance QA; fix release blockers.
-6. Re-run gates and test iPad after blocking phone fixes land.
-7. Complete App Store metadata and screenshot upload for the eventual review build.
-8. Deepen gameplay with new pigeons and countermeasures only after the first beta is stable.
-9. Enable automatic current-`main` TestFlight uploads only after successful first beta.
+1. Finish the 0.0.2 iPhone/iPad gates and visually inspect the seven screenshot motifs.
+2. Commit and push the release candidate; require green current-`main` CI.
+3. Archive and upload `0.0.2 (2)` locally from clean, committed current `main`.
+4. Accept Apple's successful upload response; do not poll TestFlight processing.
+5. Test real marker placement, camera gestures, progress, and the experimental roster on a physical phone.
+6. Narrow and balance the roster using feedback; keep arrival haptics and the bilingual comic tone.
+7. Run physical accessibility, audio, performance, and iPad QA before App Store release.
+8. Complete App Store metadata and screenshot upload for the eventual review build.
+9. Keep local delivery as requested; enabling unattended delivery requires a separate decision.
 
 Operational commands and credential names live in [delivery.md](delivery.md). Apple/GitHub setup details live in [app-store-connect-setup.md](app-store-connect-setup.md).

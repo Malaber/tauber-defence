@@ -90,7 +90,7 @@ def ios_marketing_screenshots(
     device_name=DEFAULT_IPHONE,
     artifact_dir="e2e-artifacts/marketing-iphone",
 ) -> None:
-    """Capture five deterministic App Store screenshots on one simulator."""
+    """Capture seven deterministic App Store screenshots on one simulator."""
     ios_ui_e2e.body(
         c,
         device_name=device_name,
