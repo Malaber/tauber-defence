@@ -149,9 +149,13 @@ class TauberDefenceUITestCase: XCTestCase {
         let originalMoney = money.label
         openBuildMenu(at: spot, file: file, line: line)
         let choice = app.buttons["build.\(defenseIdentifier)"]
+        let catalog = app.scrollViews["build.catalog"]
         for _ in 0..<5 {
-            if choice.isHittable { break }
-            app.scrollViews["build.catalog"].swipeLeft()
+            // XCUITest can throw while asking hittability of off-screen SwiftUI buttons.
+            // Scroll until the center is inside the catalog before requesting a hit point.
+            let center = CGPoint(x: choice.frame.midX, y: choice.frame.midY)
+            if catalog.frame.insetBy(dx: 12, dy: 0).contains(center) { break }
+            catalog.swipeLeft()
         }
         tap(choice, file: file, line: line)
         waitForLabelToChange(from: originalMoney, on: money, file: file, line: line)
