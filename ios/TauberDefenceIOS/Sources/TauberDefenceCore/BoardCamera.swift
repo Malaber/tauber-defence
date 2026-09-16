@@ -9,7 +9,8 @@ public struct BoardCamera: Equatable, Sendable {
 
     public init() {}
 
-    public var verticalSpan: Double { 11.8 / zoom }
+    // RealityKit's orthographic scale is the vertical half-extent.
+    public var verticalSpan: Double { 23.6 / zoom }
     public var eye: SIMD3<Double> {
         target + SIMD3(sin(yaw) * cos(elevation), sin(elevation), cos(yaw) * cos(elevation)) * 23.2
     }

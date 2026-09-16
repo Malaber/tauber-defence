@@ -38,11 +38,12 @@ must not wait on wall-clock timers. The UI runner uninstalls the app before an a
 from fresh state; UI tests use explicit accessibility identifiers for the HUD, build spots, tower
 choices, wave control, pigeon selection, and game-over actions.
 
-## Vertical-slice scope
+## Playable beta scope
 
-The first version intentionally contains one marketplace, one fixed waypoint path, eight fixed
-build spots, three defence types, five data-driven waves, the regular city pigeon, and Rüdiger. It
-does not contain pathfinding, dynamic behavior, upgrades, multiple maps, accounts, cloud saves,
+The beta contains one marketplace, one fixed waypoint path, eight fixed build spots, nine defence
+types, and eight pigeon types. Classic mode has five waves; experimental field trials has six.
+The main menu and field guide expose all prototypes without progression locks. Cosmetic XP,
+rank, wins, and best wave are saved locally. It does not contain pathfinding, upgrades, multiple maps, accounts, cloud saves,
 analytics, ads, in-app purchases, or multiplayer.
 
 Tauber Defence requires iOS 18 because it uses SwiftUI's iOS `RealityView`. The generated Xcode
@@ -52,6 +53,7 @@ be edited as source.
 ## Privacy boundary
 
 The current app has no account, backend, analytics, advertising, or tracking integration. Audio and
-haptic feedback are generated locally. The checked-in privacy manifest must stay aligned with the
+haptic feedback are generated locally. Progress uses app-local UserDefaults with required-reason
+code `CA92.1`. The checked-in privacy manifest must stay aligned with the
 APIs and SDKs shipped in each release. The public policy lives at
 `https://tauber-defence.malaber.de/privacy/` and must be updated before behavior changes.

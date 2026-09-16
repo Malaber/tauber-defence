@@ -1,25 +1,26 @@
 # Tauber Defence
 
-Humoristisches 2.5D-Tower-Defense-Spiel für iPhone und iPad. Eine kleine Low-Poly-Stadt trifft auf absichtlich flache 2D-Tauben: Abwehranlagen erzeugen **Pressure**, die Tauben verlieren ihre **Nerven** und fliegen davon. Keine Taube wird verletzt.
+A witty, nonviolent 2.5D tower-defence game for iPhone and iPad. A low-poly town meets deliberately
+flat pigeons: deterrents apply pressure, pigeons lose their nerve, and fly away. No pigeon is harmed.
 
-## Vertical Slice
+## Playable beta
 
-- Ein isometrischer Marktplatz mit fester Route, Café-Ziel und acht Bauplätzen
-- Fünf datengetriebene Wellen: 5, 10, 15 und 20 Stadttauben, dann Rüdiger
-- Plastik-Uhu, Rasensprenger und Falkner mit eigenen Kosten, Reichweiten und Angriffen
-- Nerven-/Pressure-System, Fluchtanimationen, Belohnungen, Sauberkeit, Sieg und Niederlage
-- Native SwiftUI-Oberfläche und RealityKit-Szene
-- Deterministische, von Rendering getrennte Swift-Simulation
-- Originale Tauben-Sprites und eigenes App-Icon
-- Unit- und UI-Tests, GitHub Actions, TestFlight-Automation und Compliance-Webseite
+- One marketplace, a fixed route, a café destination, and eight build spots.
+- Classic mode: five waves ending with Rüdiger. Field trials: six mixed experimental waves.
+- Eight pigeon types and nine deterrents with different costs, effects, and counters.
+- Native build-marker buttons, pinch zoom, twist/drag rotation, and accessible camera controls.
+- Main menu, field guide, locally saved XP, cosmetic ranks, wins, and best wave.
+- German and English UI from one translation catalog; code and documentation in English.
+- SwiftUI + RealityKit presentation over a deterministic, platform-neutral Swift simulation.
+- Core coverage gate, real-control iPhone/iPad E2E, marketing screenshots, and local TestFlight upload.
 
-## Voraussetzungen
+Prototype mechanics and verification status: [experimental beta](docs/experimental-beta.md).
+Long-term scope and acceptance checklist: [implementation plan](docs/implementation-plan.md).
 
-- Xcode 26 oder neuer
-- XcodeGen 2.38 oder neuer
-- iOS 18 oder neuer
+## Requirements
 
-## Starten
+- A compatible Xcode installation: local delivery on macOS 27 uses Xcode 27.
+- XcodeGen 2.38 or newer; Swift 6; iOS 18 or newer.
 
 ```bash
 cd ios/TauberDefenceIOS
@@ -28,30 +29,29 @@ xcodegen generate
 open TauberDefenceApp.xcodeproj
 ```
 
-Scheme `TauberDefence` wählen und auf einem iPhone- oder iPad-Simulator im Querformat starten.
+Choose the `TauberDefence` scheme and an iPhone or iPad in landscape orientation.
 
-## Architektur
+## Architecture
 
-```text
-TauberDefenceCore (Foundation)
-  GameSimulation → GameSession + GameEvent
-                         ↓
-SwiftUI GameViewModel → RealityKit GameRenderer
-```
+`TauberDefenceCore` owns game state. `GameViewModel` consumes events, updates local progression,
+and publishes snapshots. `GameRenderer` projects those snapshots into RealityKit entities.
+Rendering never decides movement, targeting, pressure, economy, or wave progression.
 
-`TauberDefenceCore` besitzt sämtliche Spielwahrheit. RealityKit gleicht Entities ausschließlich mit Session-Snapshots ab. Dadurch bleiben Bewegung, Targeting, Pressure, Wirtschaft und Wellen ohne Grafik deterministisch testbar.
+## Tests and delivery
 
-## Automatisierung
-
-Lokale Befehle und benötigte App-Store-Connect-Secrets stehen in [docs/delivery.md](docs/delivery.md) und [docs/app-store-connect-setup.md](docs/app-store-connect-setup.md). Pushes und Pull Requests durchlaufen Core- und iOS-Checks. Erfolgreiche `main`-Builds können nach expliziter Freischaltung automatisch an TestFlight gehen.
-
-Der aktuelle Stand, offene Release-Blocker und die vollständigen TestFlight-Abnahmekriterien stehen im [lebenden Implementierungsplan](docs/implementation-plan.md).
+See [delivery](docs/delivery.md), [localization](docs/localization.md), and
+[App Store Connect setup](docs/app-store-connect-setup.md).
 
 ```bash
-.venv/bin/inv check                  # Core + iPhone/iPad E2E
-.venv/bin/inv app-store-screenshots  # 5 Motive je Gerätefamilie
+.venv/bin/inv check                  # Core coverage + iPhone/iPad E2E
+.venv/bin/inv app-store-screenshots  # Seven motifs per device family
+.venv/bin/inv upload-testflight --marketing-version=0.0.2 --build-number=2
 ```
 
-## Webseite
+Uploads run locally from clean, committed, pushed `main`. Apple's successful-upload response
+completes delivery; no processing polling is required. Automatic GitHub uploads remain opt-in.
 
-Statische Produkt-, Support- und Datenschutzseiten liegen in [`website/`](website/) und werden über GitHub Pages veröffentlicht.
+## Website
+
+Product, support, and privacy pages live in [website/](website/) and deploy from `main` through
+GitHub Pages at [tauber-defence.malaber.de](https://tauber-defence.malaber.de/).

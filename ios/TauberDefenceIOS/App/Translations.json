@@ -168,7 +168,8 @@
       "select_pigeon": "Taube wählen"
     },
     "board": {
-      "spot": "Bauplatz {id}"
+      "spot": "Bauplatz {id}",
+      "ready": "Marktplatz bereit"
     },
     "camera": {
       "in": "Vergrößern",
@@ -367,7 +368,8 @@
       "select_pigeon": "Select pigeon"
     },
     "board": {
-      "spot": "Build spot {id}"
+      "spot": "Build spot {id}",
+      "ready": "Marketplace ready"
     },
     "camera": {
       "in": "Zoom in",

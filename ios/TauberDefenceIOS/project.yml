@@ -23,7 +23,7 @@ targets:
         PRODUCT_NAME: Tauber Defence
         PRODUCT_BUNDLE_IDENTIFIER: de.malaber.tauber-defence
         DEVELOPMENT_TEAM: VWKG94374J
-        MARKETING_VERSION: 0.0.1
+        MARKETING_VERSION: 0.0.2
         CURRENT_PROJECT_VERSION: 2
         SWIFT_VERSION: 6.0
         SWIFT_STRICT_CONCURRENCY: complete

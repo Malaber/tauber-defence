@@ -59,7 +59,8 @@ The `low-budget` fixture starts with €350: one real falconer purchase leaves �
 checks that an unaffordable owl leaves the budget unchanged and displays a persistent inline
 error. Purchase failures remain readable until the player changes or closes the build selection.
 
-Capture only the five-shot App Store gallery on both default device families:
+Capture the seven-shot App Store gallery (menu, marketplace, battle, boss, results, and field trials)
+on both default device families:
 
 ```bash
 .venv/bin/inv app-store-screenshots
@@ -146,7 +147,7 @@ Store Connect API-key authentication, and removes temporary signing material eve
 ## Release checklist
 
 1. Make portable tests and both simulator jobs green.
-2. Smoke-test build placement, all three defences, pause/restart, each wave, Rüdiger, victory, and
+2. Smoke-test real build markers, all nine defences, camera gestures, menu/progression, pause/restart, each wave, Rüdiger, victory, and
    defeat on a physical iPhone and iPad.
 3. Verify VoiceOver labels, large text, reduced motion, and landscape layout on both device families.
 4. Confirm the privacy manifest and public privacy/support pages still describe the shipped code.

@@ -99,6 +99,8 @@ struct HowToPlayView: View {
                         title: localization.t("help.pick_spot_title"),
                         text: localization.t("help.pick_spot_body")
                     )
+                    HelpRow(symbol: "viewfinder", title: localization.t("camera.title"),
+                            text: localization.t("camera.help"))
                     HelpRow(
                         symbol: "shield.fill",
                         title: localization.t("help.deploy_title"),

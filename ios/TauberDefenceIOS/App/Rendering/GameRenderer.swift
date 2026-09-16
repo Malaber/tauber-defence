@@ -1,4 +1,5 @@
 import RealityKit
+import Combine
 import TauberDefenceCore
 import UIKit
 import simd
@@ -6,7 +7,7 @@ import simd
 /// Reconciles immutable simulation snapshots into a persistent RealityKit entity graph.
 /// RealityKit never owns game truth: every visible transform is derived from `GameSession`.
 @MainActor
-final class GameRenderer {
+final class GameRenderer: ObservableObject {
     enum TapTarget: Equatable {
         case buildSpot(Int)
         case pigeon(Int)
@@ -86,7 +87,7 @@ final class GameRenderer {
         var camera = OrthographicCameraComponent()
         camera.near = 0.1
         camera.far = 100
-        camera.scale = Float(pose.verticalSpan)
+        camera.scale = Float(pose.verticalSpan / 2)
         camera.scaleDirection = .vertical
         cameraEntity.components.set(camera)
         cameraEntity.look(at: SIMD3<Float>(pose.target), from: SIMD3<Float>(pose.eye), relativeTo: nil)

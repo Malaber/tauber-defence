@@ -1,4 +1,4 @@
-# Experimental beta: 0.0.1 (2)
+# Experimental beta: 0.0.2 (2)
 
 The first physical-device feedback approved a broad prototype pass. All options remain unlocked;
 balance and visual polish are intentionally provisional, not App Store release claims.

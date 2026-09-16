@@ -4,6 +4,7 @@ import XCTest
 final class BoardCameraTests: XCTestCase {
     func testProjectionTracksZoomAndRotation() {
         var camera = BoardCamera()
+        XCTAssertEqual(camera.verticalSpan, 23.6)
         XCTAssertEqual(camera.project(camera.target, width: 800, height: 400), SIMD2(400, 200))
         let point = SIMD3<Double>(3, 0.2, 2)
         let initial = camera.project(point, width: 800, height: 400)

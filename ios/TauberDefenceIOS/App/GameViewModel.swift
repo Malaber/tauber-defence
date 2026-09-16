@@ -147,6 +147,7 @@ final class GameViewModel {
     }
 
     func selectBuildSpot(_ id: Int) {
+        guard !session.isGameOver, !isShowingMenu else { return }
         guard let spot = session.buildSpots.first(where: { $0.id == id }) else { return }
         purchaseError = nil
         selectedPigeonID = nil

@@ -25,6 +25,7 @@ class TauberDefenceUITestCase: XCTestCase {
     enum Fixture: String {
         case `default`
         case menu
+        case roster
         case lowBudget = "low-budget"
         case battle
         case boss
@@ -62,6 +63,7 @@ class TauberDefenceUITestCase: XCTestCase {
         app.launchEnvironment["TZ"] = "Europe/Berlin"
         app.launch()
         waitForExistence(element(fixture == .menu ? "menu.screen" : "game.city"), timeout: 20)
+        if fixture != .menu { waitForExistence(element("board.ready"), timeout: 45) }
         return app
     }
 
@@ -407,6 +409,7 @@ final class TauberDefenceMarketingScreenshots: TauberDefenceUITestCase {
         snapshot(.boss, indicator: "wave.running", name: "marketing-03-ruediger")
         snapshot(.victory, indicator: "game.result", name: "marketing-04-victory")
         snapshot(.defeat, indicator: "game.result", name: "marketing-05-defeat")
+        snapshot(.roster, indicator: "wave.running", name: "marketing-06-field-trials")
     }
 
     private func snapshot(_ fixture: Fixture, indicator: String, name: String) {

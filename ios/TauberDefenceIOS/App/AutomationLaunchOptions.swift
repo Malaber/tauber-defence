@@ -6,6 +6,7 @@ struct AutomationLaunchOptions: Equatable {
     enum Fixture: String {
         case `default`
         case menu
+        case roster
         case lowBudget = "low-budget"
         case battle
         case boss
@@ -24,7 +25,11 @@ struct AutomationLaunchOptions: Equatable {
     )
 
     static var current: AutomationLaunchOptions {
+        #if DEBUG
         parse(arguments: ProcessInfo.processInfo.arguments)
+        #else
+        .production
+        #endif
     }
 
     var isAutomatedLaunch: Bool {
@@ -64,6 +69,22 @@ enum AutomationFixtureFactory {
         }
 
         switch options.fixture {
+        case .roster:
+            let showcase = LevelDefinition(id: "ui-roster", name: "Field trials",
+                path: LevelDefinition.marketplace.path, buildSpots: LevelDefinition.marketplace.buildSpots,
+                waves: [WaveDefinition(number: 1, groups: PigeonType.allCases.map {
+                    WaveGroup(pigeonType: $0, count: 1, spawnInterval: 0.4)
+                })])
+            var simulation = GameSimulation(level: showcase,
+                configuration: automationConfiguration(startingMoney: 2_000))
+            for (index, type) in DefenseType.allCases.dropFirst(3).enumerated() {
+                try? simulation.purchaseDefense(type, at: index + 1)
+            }
+            simulation.startNextWave()
+            simulation.update(deltaTime: 3.2)
+            _ = simulation.consumeEvents()
+            return simulation
+
         case .default, .menu:
             return GameSimulation(
                 level: .marketplace,

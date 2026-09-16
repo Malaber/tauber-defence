@@ -57,7 +57,7 @@ jobs:
       EXPECTED_APP_STORE_CONNECT_APP_ID: '6812439777'
       APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || 'VWKG94374J' }}
       IOS_BUNDLE_IDENTIFIER: ${{ vars.IOS_BUNDLE_IDENTIFIER || 'de.malaber.tauber-defence' }}
-      IOS_MARKETING_VERSION: ${{ vars.IOS_MARKETING_VERSION || '0.0.1' }}
+      IOS_MARKETING_VERSION: ${{ vars.IOS_MARKETING_VERSION || '0.0.2' }}
       IOS_BUILD_NUMBER: ${{ github.run_number }}
       APP_STORE_CONNECT_APP_ID: ${{ vars.APP_STORE_CONNECT_APP_ID }}
     steps:

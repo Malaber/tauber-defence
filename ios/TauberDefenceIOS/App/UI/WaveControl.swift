@@ -14,7 +14,7 @@ struct WaveControl: View {
                         .tint(GameTheme.yellow)
                     Text(
                         localization.t(
-                            session.currentWaveNumber == session.level.waves.count
+                            session.currentWave?.groups.contains(where: { $0.pigeonType == .ruediger }) == true
                                 ? "wave.boss_inbound"
                                 : "wave.pigeons_inbound"
                         )
@@ -28,7 +28,7 @@ struct WaveControl: View {
                 .accessibilityIdentifier("wave.running")
             } else if session.phase == .preparing || session.phase == .waveComplete {
                 Button(action: onStart) {
-                    Label(buttonTitle, systemImage: session.currentWaveNumber == 4 ? "exclamationmark.triangle.fill" : "play.fill")
+                    Label(buttonTitle, systemImage: nextWaveHasBoss ? "exclamationmark.triangle.fill" : "play.fill")
                         .font(.system(size: 14, weight: .black, design: .rounded))
                         .tracking(0.5)
                         .padding(.horizontal, 22)
@@ -46,7 +46,11 @@ struct WaveControl: View {
     private var buttonTitle: String {
         let currentWaveNumber = session.currentWaveNumber ?? 0
         if currentWaveNumber == 0 { return localization.t("wave.start_first") }
-        if currentWaveNumber == 4 { return localization.t("wave.summon_boss") }
+        if nextWaveHasBoss { return localization.t("wave.summon_boss") }
         return localization.t("wave.next")
+    }
+
+    private var nextWaveHasBoss: Bool {
+        session.nextWave?.groups.contains(where: { $0.pigeonType == .ruediger }) == true
     }
 }

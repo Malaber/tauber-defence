@@ -21,4 +21,6 @@ To add a language:
 
 The UI test runner sets `TAUBERDEFENCE_UI_TEST_LANGUAGE` for deterministic language selection.
 Core tests verify key coverage, nonempty values, placeholder parity, regional matching, and
-fallback behavior. XCUITest verifies English first-launch and victory screens.
+fallback behavior. XCUITest verifies the English menu, field guide, first wave, and victory screens.
+Roster keys follow enum raw values (with the legacy `plastic_owl` alias). Every catalog leaf is
+checked for locale and placeholder parity; retain explicit required keys for dynamic UI lookups.

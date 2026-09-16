@@ -15,9 +15,13 @@ final class AppLocalization: ObservableObject {
     ) {
         self.catalog = catalog
         self.preferredLocales = preferredLocales
+        #if DEBUG
         overrideLocale = catalog.normalizedAvailableLocale(
             processInfo.environment["TAUBERDEFENCE_UI_TEST_LANGUAGE"]
         )
+        #else
+        overrideLocale = nil
+        #endif
     }
 
     var effectiveLocale: String {

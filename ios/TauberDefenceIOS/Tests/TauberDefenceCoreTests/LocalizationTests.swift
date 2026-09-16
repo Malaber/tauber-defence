@@ -65,6 +65,15 @@ final class LocalizationTests: XCTestCase {
         XCTAssertTrue(expectedTranslationKeys.isSubset(of: Set(primary.keys)))
         XCTAssertTrue(expectedTranslationKeys.isSubset(of: Set(english.keys)))
         XCTAssertEqual(Set(primary.keys), Set(english.keys))
+        for type in PigeonType.allCases {
+            XCTAssertNotNil(primary["pigeon.\(type.rawValue).name"])
+            XCTAssertNotNil(primary["pigeon.\(type.rawValue).subtitle"])
+        }
+        for type in DefenseType.allCases {
+            let key = type == .plasticOwl ? "plastic_owl" : type.rawValue
+            XCTAssertNotNil(primary["defense.\(key).name"])
+            XCTAssertNotNil(primary["defense.\(key).tagline"])
+        }
 
         for key in primary.keys {
             let primaryValue = try XCTUnwrap(primary[key], "Missing primary value for \(key)")
