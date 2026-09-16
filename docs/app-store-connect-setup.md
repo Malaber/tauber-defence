@@ -9,34 +9,36 @@ provisioned. Pull requests never upload. A successful `main` build uploads only 
 - Product name: `Tauber Defence`
 - Platform: iOS
 - Minimum OS: iOS 18
-- Bundle identifier: `de.malaber.tauberdefence`
+- Bundle identifier: `de.malaber.tauber-defence`
+- Apple ID: `6812439777`
 - Initial marketing version: `0.0.1`
 - Primary category: Games
 - Product URL: `https://tauber-defence.malaber.de/`
 - Support URL: `https://tauber-defence.malaber.de/support/`
 - Privacy policy URL: `https://tauber-defence.malaber.de/privacy/`
-- SKU suggestion: `tauber-defence-ios` (internal and not customer-visible)
+- Primary language: German
+- SKU: `de.malaber.tauber-defence` (internal and not customer-visible)
 
-The numeric Apple ID is assigned by App Store Connect and must not be guessed or confused with the
-bundle identifier. Store it in the GitHub variable `APP_STORE_CONNECT_APP_ID` after the app record
-exists.
+The numeric Apple ID is distinct from the bundle identifier. Keep `6812439777` in the GitHub
+variable `APP_STORE_CONNECT_APP_ID`.
 
 ## One-time Apple setup
 
 1. In the Apple Developer account, accept current agreements. App Store Connect may block app
    creation until the Account Holder accepts them.
-2. Under **Certificates, Identifiers & Profiles → Identifiers**, register an explicit App ID:
+2. Under **Certificates, Identifiers & Profiles → Identifiers**, confirm the explicit App ID:
    - description: `Tauber Defence`
-   - bundle ID: `de.malaber.tauberdefence`
+   - bundle ID: `de.malaber.tauber-defence`
    - capabilities: no optional capabilities for the vertical slice
-3. Under **App Store Connect → Apps**, choose **+ → New App**:
+3. Under **App Store Connect → Apps**, confirm the existing app record:
    - platform: iOS
    - name: `Tauber Defence`
-   - primary language: German or English (choose the language used for initial store metadata)
-   - bundle ID: `de.malaber.tauberdefence`
-   - SKU: `tauber-defence-ios`
+   - primary language: German
+   - bundle ID: `de.malaber.tauber-defence`
+   - SKU: `de.malaber.tauber-defence`
+   - Apple ID: `6812439777`
    - user access: Full Access
-4. Copy the numeric Apple ID from **App Information** into `APP_STORE_CONNECT_APP_ID`.
+4. Set `APP_STORE_CONNECT_APP_ID` to the numeric Apple ID `6812439777`.
 5. Create an **App Store Connect** distribution provisioning profile for this explicit App ID and
    download it. A valid team Apple Distribution certificate already used by another Malaber app can
    be reused; the provisioning profile cannot, because it is bound to this App ID.
@@ -54,10 +56,11 @@ desired before signing and upload.
 
 Repository variables:
 
-- `APP_STORE_CONNECT_APP_ID`: numeric Apple ID from App Store Connect.
+- `APP_STORE_CONNECT_APP_ID`: `6812439777`.
 - `IOS_MARKETING_VERSION`: optional; defaults to `0.0.1`.
 - `APPLE_TEAM_ID`: optional; defaults to `VWKG94374J`.
-- `IOS_BUNDLE_IDENTIFIER`: optional; defaults to `de.malaber.tauberdefence`.
+- `IOS_BUNDLE_IDENTIFIER`: optional; defaults to `de.malaber.tauber-defence` and any override must
+  match exactly.
 - `TESTFLIGHT_UPLOAD_ENABLED`: leave unset during initial setup.
 
 Environment secrets:
@@ -66,7 +69,7 @@ Environment secrets:
 - `BUILD_CERTIFICATE_BASE64`: base64 Apple Distribution `.p12`.
 - `P12_PASSWORD`: password used when the `.p12` was exported.
 - `BUILD_PROVISION_PROFILE_BASE64`: base64 App Store Connect provisioning profile for
-  `de.malaber.tauberdefence`.
+  `de.malaber.tauber-defence`.
 - `APP_STORE_CONNECT_KEY_ID`
 - `APP_STORE_CONNECT_ISSUER_ID`
 - `APP_STORE_CONNECT_PRIVATE_KEY`: complete `.p8` contents, including header and footer.

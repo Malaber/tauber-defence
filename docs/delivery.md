@@ -96,8 +96,10 @@ With an Xcode Apple account configured for team `VWKG94374J`, archive and upload
 
 Use a new build number for every later upload of the same marketing version. The task generates the
 project, refuses anything except a clean, pushed, current `main`, archives with automatic signing,
-and exports using `ExportOptions.TestFlight.plist`, whose `destination` is `upload`. The script uses
-a system-only `PATH` for `xcodebuild`; Homebrew `rsync`
+verifies bundle identifier, version, build number, and signing team in the signed archive, then
+exports using `ExportOptions.TestFlight.plist`, whose `destination` is `upload`. The exact bundle
+identifier selects App Store Connect app `6812439777`. The script uses a system-only `PATH` for
+`xcodebuild`; Homebrew `rsync`
 does not support an extended-attribute option used by Xcode packaging and can otherwise cause an
 opaque `exportArchive Copy failed` error. Archive/export logs and the signed archive remain at the
 printed temporary path.
@@ -113,9 +115,9 @@ Repository variables:
 
 - `TESTFLIGHT_UPLOAD_ENABLED`
 - `APPLE_TEAM_ID` (optional; defaults to `VWKG94374J`)
-- `IOS_BUNDLE_IDENTIFIER` (optional; defaults to `de.malaber.tauberdefence`)
+- `IOS_BUNDLE_IDENTIFIER` (optional; must resolve to `de.malaber.tauber-defence`)
 - `IOS_MARKETING_VERSION` (optional; defaults to `0.0.1`)
-- `APP_STORE_CONNECT_APP_ID` (required numeric Apple ID)
+- `APP_STORE_CONNECT_APP_ID` (required; must be `6812439777`)
 
 Protected `testflight` environment secrets:
 
@@ -128,9 +130,10 @@ Protected `testflight` environment secrets:
 - `APP_STORE_CONNECT_PRIVATE_KEY`
 
 The workflow validates configuration, imports the distribution certificate into a temporary
-keychain, installs the app-specific provisioning profile, exports an IPA with manual signing,
-retains the signed archive and delivery logs for 14 days, uploads using App Store Connect API-key
-authentication, and removes temporary signing material even after failure.
+keychain, validates the app-specific provisioning profile's team, application identifier, and
+expiration, verifies the signed archive identity, exports an IPA with manual signing, retains the
+signed archive and delivery logs for 14 days, uploads explicitly to Apple ID `6812439777` using App
+Store Connect API-key authentication, and removes temporary signing material even after failure.
 
 ## Release checklist
 

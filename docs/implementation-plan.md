@@ -13,7 +13,7 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 
 - [x] Native SwiftUI + RealityKit vertical slice exists for iPhone and iPad.
 - [x] Deterministic game core, five waves, three defences, economy, victory, defeat, and Rüdiger exist.
-- [x] Core unit suite contains 23 tests and currently clears the 90% line-coverage gate.
+- [x] Core unit suite contains 26 tests and currently clears the 90% line-coverage gate.
 - [x] Generic iOS Simulator build has succeeded with signing disabled.
 - [x] Comprehensive XCUITest flows, deterministic fixtures, retry tooling, and marketing screenshot capture are implemented.
 - [x] Make the complete iPhone XCUITest run green and retain its passing artifacts.
@@ -31,7 +31,7 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 - [x] Generate the Xcode project from `ios/TauberDefenceIOS/project.yml` with XcodeGen.
 - [x] Target iOS 18+, iPhone and iPad.
 - [x] Restrict gameplay to landscape orientations.
-- [x] Configure bundle identifier `de.malaber.tauberdefence` and team `VWKG94374J`.
+- [x] Configure bundle identifier `de.malaber.tauber-defence` and team `VWKG94374J`.
 - [x] Configure version `0.0.1`, build `1`, Games category, and no non-exempt encryption.
 - [x] Add privacy manifest.
 - [x] Add original production app icon based on the supplied artwork.
@@ -109,6 +109,10 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 - [x] Show insufficient-funds and important event feedback.
 - [x] Show boss warning text and meme-flavoured status text.
 - [x] Emit combo feedback when several pigeons flee in one simulation step.
+- [x] Keep all user-facing German and English copy in one bundled translation catalog.
+- [x] Select German by default, follow the device language, and fall back safely to German.
+- [x] Verify German/English key and placeholder parity in the core test suite.
+- [x] Smoke-test the English first-launch and victory flows with XCUITest.
 - [ ] Add or tune floating reward text and group-flee spectacle for the intended comedic payoff.
 - [ ] Conduct a complete German copy pass for consistency, spelling, and tone.
 
@@ -213,7 +217,7 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 
 ### Signing material
 
-- [ ] Register explicit App ID `de.malaber.tauberdefence` in Apple Developer.
+- [x] Register explicit App ID `de.malaber.tauber-defence` in Apple Developer.
 - [ ] Confirm valid Apple Distribution certificate for team `VWKG94374J`.
 - [ ] Create App Store distribution provisioning profile for this bundle ID.
 - [ ] Create/reuse least-privilege App Store Connect API key.
@@ -231,9 +235,9 @@ Living checklist for the first playable TestFlight build. Update it whenever evi
 ### App record and metadata
 
 - [ ] Accept current Apple agreements.
-- [ ] Create App Store Connect app record for `Tauber Defence`.
-- [ ] Choose primary language and confirm name availability.
-- [ ] Set SKU `tauber-defence-ios` and bundle identifier.
+- [x] Create App Store Connect app record for `Tauber Defence` (Apple ID `6812439777`).
+- [x] Set German as the primary language and confirm name availability.
+- [x] Set SKU and bundle identifier to `de.malaber.tauber-defence`.
 - [ ] Add product, support, and privacy URLs after public verification.
 - [ ] Add app description, subtitle, keywords, promotional text, and copyright.
 - [ ] Upload final iPhone and iPad screenshot galleries.
@@ -297,13 +301,14 @@ Start only after `0.0.1` reaches a physical phone and its blocking bugs are reco
 
 ## Recommended next sequence
 
-1. Stabilize and pass full iPhone/iPad E2E; inspect generated screenshots.
+1. Commit and push the localized release candidate; require green current-`main` CI.
 2. Re-check the published privacy copy and metadata against the signed release candidate.
-3. Run physical gameplay/accessibility/performance QA; fix release blockers.
-4. Provision App ID, profile, GitHub environment, App Store Connect record, and metadata.
-5. Run clean release gates; upload `0.0.1` from committed current `main`.
-6. Install processed TestFlight binary on physical iPhone first; record and fix blocking bugs.
-7. Re-run gates, test iPad, then deepen gameplay with new pigeons and countermeasures.
-8. Enable automatic current-`main` TestFlight uploads only after successful first beta.
+3. Archive and upload `0.0.1` from clean, committed current `main`.
+4. Install the processed TestFlight binary on a physical iPhone; record and fix blocking bugs.
+5. Run physical gameplay, accessibility, audio, and performance QA; fix release blockers.
+6. Re-run gates and test iPad after blocking phone fixes land.
+7. Complete App Store metadata and screenshot upload for the eventual review build.
+8. Deepen gameplay with new pigeons and countermeasures only after the first beta is stable.
+9. Enable automatic current-`main` TestFlight uploads only after successful first beta.
 
 Operational commands and credential names live in [delivery.md](delivery.md). Apple/GitHub setup details live in [app-store-connect-setup.md](app-store-connect-setup.md).

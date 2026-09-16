@@ -121,7 +121,7 @@ for ((attempt = 1; attempt <= attempts; attempt++)); do
     --wifiBars 3 \
     --cellularBars 4 \
     >/dev/null 2>&1 || true
-  xcrun simctl uninstall "$device_udid" de.malaber.tauberdefence >/dev/null 2>&1 || true
+  xcrun simctl uninstall "$device_udid" de.malaber.tauber-defence >/dev/null 2>&1 || true
 
   test_log="$artifact_path/test-attempt-$attempt.log"
   only_testing_args=()
